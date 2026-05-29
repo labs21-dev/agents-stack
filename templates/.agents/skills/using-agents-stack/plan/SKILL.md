@@ -186,3 +186,5 @@ Map every acceptance criterion to a concrete test approach.
 ## Done
 
 `plan.md` exists with architecture decisions, API design, DB schema, real-file impact analysis, and AC-mapped test strategy. `status.json` reflects plan phase.
+
+**PASS → Next: tasks**　|　**FAIL → Rollback to plan**

@@ -89,3 +89,5 @@ After writing changelog, assess whether this workstream produced lasting project
 ## Done
 
 `changelog.md` written. Reference updated (if needed). Workstream archived in `.agents-stack/archive/`. Ready for next workstream.
+
+**→ End of pipeline. Ready for next workstream.**

@@ -147,3 +147,5 @@ Update `status.json`:
 ## Done
 
 `report.md` exists with PASS/FAIL verdict. If PASS: `status.json.phase_gates.analyze.passed` = true. If FAIL: blocking_gate set, correct route identified.
+
+**PASS → Next: implement**　|　**FAIL → Rollback to L1: tasks / L2: plan / L3: spec**

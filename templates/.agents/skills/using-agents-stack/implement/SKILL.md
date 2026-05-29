@@ -254,3 +254,5 @@ Before declaring implement phase complete, verify ALL gates:
 | Phase gate updated | `status.json.phase_gates.implement.handoff_written` = true |
 
 If any gate is unmet, the implement phase is NOT done. Fix the gate before declaring completion.
+
+**PASS → Next: qa**　|　**FAIL → Rollback to L1: re-implement / L2: plan / L3: spec**

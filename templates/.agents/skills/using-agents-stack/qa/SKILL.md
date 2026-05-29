@@ -191,3 +191,5 @@ Quick scan to catch anything implement missed:
 ## Done
 
 `qa-report.md` exists with honest PASS/FAIL/BLOCKED verdict. Layer assessment complete. Rework destination clear.
+
+**PASS → Next: release**　|　**FAIL → Rollback to L1: implement / L2: plan / L3: spec**　|　**BLOCKED → awaiting_human**

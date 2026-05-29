@@ -106,3 +106,5 @@ failure-path AC is incomplete.
 ## Done
 
 `spec.md` exists with verifiable BDD acceptance criteria, pre-identified edge cases, and clear out-of-scope declarations. `status.json` reflects spec phase.
+
+**PASS → Next: plan**

@@ -137,3 +137,5 @@ Run this check **before** writing tasks.md. If you find gaps, fix them by adding
 ## Done
 
 `tasks.md` exists with strictly sequential tasks, each having complete 5-dimension verification metadata. Cross-artifact consistency check passed. First task is scaffold test infrastructure. `status.json` reflects tasks phase.
+
+**PASS → Next: analyze**　|　**FAIL → Rollback to tasks**
