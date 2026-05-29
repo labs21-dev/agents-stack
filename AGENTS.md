@@ -4,7 +4,7 @@ This repository uses agents-stack v3 — a Goal-QA-Driven development harness.
 
 ## Key Paths
 
-- .agents-stack/<ID>/ — workstream artifacts (spec.md, plan.md, tasks.md, report.md, handoff.md, qa-report.md, changelog.md, status.json)
+- .agents-stack/workstream/<ws-id>_{date}/ — workstream artifacts (spec.md, plan.md, tasks.md, report.md, handoff.md, qa-report.md, changelog.md, status.json)
 - .agents-stack/tracked-work.json — active/parked workstream registry
 - .agents-stack/reference/ — project knowledge (architecture.md, design.md)
 - .agents/skills/using-agents-stack/ — router SKILL.md and phase SKILL.md files
@@ -37,8 +37,8 @@ Each phase has a corresponding SKILL.md in `.agents/skills/using-agents-stack/<p
 ## Quick Resume
 
 1. Read CONSTITUTION.md, AGENTS.md, .agents-stack/tracked-work.json
-2. Read .agents-stack/<ID>/status.json and strongest artifact
-3. Load the corresponding phase SKILL.md from `.agents/skills/using-agents-stack/<phase>/SKILL.md`
+2. Read .agents-stack/workstream/<ws-id>_{date}/status.json and strongest artifact
+3. Load the corresponding phase SKILL.md from `.agents/skills/using-agents-stack/<phase>/SKILL.md` — **if the skill is `using-agents-stack`: route only, do NOT implement.**
 4. Verify checkpoint matches disk state, continue from strongest valid checkpoint
 
 Success: a cold-start agent can read these files and continue safely without chat history.
