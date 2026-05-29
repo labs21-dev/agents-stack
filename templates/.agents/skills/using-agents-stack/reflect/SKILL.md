@@ -2,8 +2,10 @@
 name: reflect
 description: On-demand mistake/learning logger. Records errors, corrections, and insights to `.agents-stack/learnings/` for cross-session recall. Also queries past learnings on request.
 trigger: On demand. User says "remember this mistake," "log this error," "show me past learnings," "recall," or similar.
-inputs: [user's natural language description of the mistake or learning]
-outputs: [.agents-stack/learnings/<date>--<slug>.md (record), or printed recall results (query)]
+inputs:
+  - user's natural language description of the mistake or learning
+outputs:
+  - .agents-stack/learnings/<date>--<slug>.md (record), or printed recall results (query)
 boundaries: Read and write `.agents-stack/learnings/` only. No code changes. No pipeline integration.
 ---
 

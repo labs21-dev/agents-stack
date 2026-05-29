@@ -2,8 +2,13 @@
 name: spec
 description: Define what we build: goal, user stories, edge cases, BDD acceptance criteria.
 trigger: When no spec.md exists for the active workstream.
-inputs: [CONSTITUTION.md, .agents-stack/tracked-work.json, relevant reference docs]
-outputs: [.agents-stack/workstream/<ws-id>_{YYYYMMDD}/spec.md, .agents-stack/workstream/<ws-id>_{YYYYMMDD}/status.json]
+inputs:
+  - CONSTITUTION.md
+  - .agents-stack/tracked-work.json
+  - relevant reference docs
+outputs:
+  - .agents-stack/workstream/<ws-id>_{YYYYMMDD}/spec.md
+  - .agents-stack/workstream/<ws-id>_{YYYYMMDD}/status.json
 boundaries: Requirements definition only. No code. No architecture design.
 ---
 

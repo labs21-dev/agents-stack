@@ -2,8 +2,12 @@
 name: plan
 description: Design architecture: components, API schema, DB model, impact analysis, test strategy.
 trigger: When spec.md exists and plan.md does not.
-inputs: [CONSTITUTION.md, spec.md]
-outputs: [.agents-stack/workstream/<ws-id>_{YYYYMMDD}/plan.md, .agents-stack/workstream/<ws-id>_{YYYYMMDD}/status.json]
+inputs:
+  - CONSTITUTION.md
+  - spec.md
+outputs:
+  - .agents-stack/workstream/<ws-id>_{YYYYMMDD}/plan.md
+  - .agents-stack/workstream/<ws-id>_{YYYYMMDD}/status.json
 boundaries: Design only. No code implementation. Must inspect real code for impact analysis.
 ---
 

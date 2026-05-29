@@ -2,8 +2,12 @@
 name: tasks
 description: Break plan into minimal verifiable tasks with 5-dimension verification metadata.
 trigger: When plan.md exists and tasks.md does not.
-inputs: [spec.md, plan.md]
-outputs: [.agents-stack/workstream/<ws-id>_{YYYYMMDD}/tasks.md, .agents-stack/workstream/<ws-id>_{YYYYMMDD}/status.json]
+inputs:
+  - spec.md
+  - plan.md
+outputs:
+  - .agents-stack/workstream/<ws-id>_{YYYYMMDD}/tasks.md
+  - .agents-stack/workstream/<ws-id>_{YYYYMMDD}/status.json
 boundaries: Task breakdown only. No implementation. No design changes.
 ---
 
