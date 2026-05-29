@@ -3,7 +3,7 @@ name: release
 description: Write changelog, update reference docs, archive completed workstream.
 trigger: When qa-report.md exists with PASS verdict.
 inputs: [spec.md, plan.md, tasks.md, handoff.md, qa-report.md]
-outputs: [.agents-stack/<id>/changelog.md, .agents-stack/<id>/status.json, updated reference docs if needed]
+outputs: [.agents-stack/workstream/<ws-id>_{YYYYMMDD}/changelog.md, .agents-stack/workstream/<ws-id>_{YYYYMMDD}/status.json, updated reference docs if needed]
 boundaries: Read-only except changelog.md, status.json, and reference/. Archive is move not copy.
 ---
 

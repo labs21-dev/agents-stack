@@ -3,7 +3,7 @@ name: implement
 description: RED-GREEN-REFACTOR implementation per task. Each task passes before next. Produces handoff.md with reproducible evidence.
 trigger: When tasks.md exists and handoff.md does not, or retry after Layer 1 rework.
 inputs: [CONSTITUTION.md, spec.md, plan.md, tasks.md]
-outputs: [code within task boundaries, .agents-stack/<id>/handoff.md, .agents-stack/<id>/status.json]
+outputs: [code within task boundaries, .agents-stack/workstream/<ws-id>_{YYYYMMDD}/handoff.md, .agents-stack/workstream/<ws-id>_{YYYYMMDD}/status.json]
 boundaries: Only files in tasks.md deliverables. Must not self-approve. Must record reproducible evidence.
 ---
 

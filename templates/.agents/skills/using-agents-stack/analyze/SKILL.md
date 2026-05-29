@@ -3,7 +3,7 @@ name: analyze
 description: Pre-implementation alignment gate. Checks spec / plan / tasks consistency and plan vs codebase reality before code is written.
 trigger: When tasks.md exists and analyze has not passed for this workstream. Also triggered on L2/L3 reroute from implement or qa.
 inputs: [spec.md, plan.md, tasks.md, codebase files referenced by plan.md]
-outputs: [.agents-stack/<id>/report.md, .agents-stack/<id>/status.json]
+outputs: [.agents-stack/workstream/<ws-id>_{YYYYMMDD}/report.md, .agents-stack/workstream/<ws-id>_{YYYYMMDD}/status.json]
 boundaries: Read-only. No code changes. No design changes. No task modifications.
 ---
 
@@ -92,7 +92,7 @@ Compare `plan.md` Impact Analysis against the current codebase. Since plan was w
 
 ### Check 7: Report
 
-Write `report.md` to `.agents-stack/<id>/report.md`:
+Write `report.md` to `.agents-stack/workstream/<ws-id>_{YYYYMMDD}/report.md`:
 
 ```markdown
 # Analyze Report

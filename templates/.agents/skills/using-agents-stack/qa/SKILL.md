@@ -3,7 +3,7 @@ name: qa
 description: Independently verify implementation against SPEC acceptance criteria. Generator ≠ Auditor.
 trigger: When handoff.md exists and qa-report.md does not.
 inputs: [CONSTITUTION.md, spec.md, plan.md, tasks.md, handoff.md]
-outputs: [.agents-stack/<id>/qa-report.md, .agents-stack/<id>/status.json]
+outputs: [.agents-stack/workstream/<ws-id>_{YYYYMMDD}/qa-report.md, .agents-stack/workstream/<ws-id>_{YYYYMMDD}/status.json]
 boundaries: READ-ONLY except qa-report.md and status.json. Must independently reproduce. Must not rubber-stamp.
 ---
 

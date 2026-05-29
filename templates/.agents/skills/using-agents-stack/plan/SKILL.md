@@ -3,7 +3,7 @@ name: plan
 description: Design architecture: components, API schema, DB model, impact analysis, test strategy.
 trigger: When spec.md exists and plan.md does not.
 inputs: [CONSTITUTION.md, spec.md]
-outputs: [.agents-stack/<id>/plan.md, .agents-stack/<id>/status.json]
+outputs: [.agents-stack/workstream/<ws-id>_{YYYYMMDD}/plan.md, .agents-stack/workstream/<ws-id>_{YYYYMMDD}/status.json]
 boundaries: Design only. No code implementation. Must inspect real code for impact analysis.
 ---
 
@@ -172,7 +172,7 @@ Map every acceptance criterion to a concrete test approach.
 5. Map each AC to a test strategy with the appropriate level (unit/integration/e2e)
 6. Perform impact analysis: what real files change, what downstream modules are affected
 7. Identify risks and document assumptions explicitly
-8. Write `plan.md` to `.agents-stack/<id>/plan.md`
+8. Write `plan.md` to `.agents-stack/workstream/<ws-id>_{YYYYMMDD}/plan.md`
 9. Update `status.json`: set `phase: "plan"`
 
 ## Quality Bar

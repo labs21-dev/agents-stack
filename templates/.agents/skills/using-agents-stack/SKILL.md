@@ -27,7 +27,7 @@ Workers run phases; you route, merge, and serve as the human-facing boundary.
 
 This orchestrator activates when:
 - The user explicitly invokes a pipeline phase: spec, plan, tasks, implement, qa, release
-- Active `.agents-stack/workstream/<ws-id>_{date}/` artifacts exist + development intent
+- Active `.agents-stack/workstream/<ws-id>_{YYYYMMDD}/` artifacts exist + development intent
 - The user references workstream operations: "start a workstream", "new feature", "track this work", "run the pipeline"
 
 Ad-hoc development (one-off bugfix, questions, exploration) → do NOT route through this orchestrator. Execute directly or load the appropriate domain skill.

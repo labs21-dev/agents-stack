@@ -3,7 +3,7 @@ name: tasks
 description: Break plan into minimal verifiable tasks with 5-dimension verification metadata.
 trigger: When plan.md exists and tasks.md does not.
 inputs: [spec.md, plan.md]
-outputs: [.agents-stack/<id>/tasks.md, .agents-stack/<id>/status.json]
+outputs: [.agents-stack/workstream/<ws-id>_{YYYYMMDD}/tasks.md, .agents-stack/workstream/<ws-id>_{YYYYMMDD}/status.json]
 boundaries: Task breakdown only. No implementation. No design changes.
 ---
 
@@ -95,7 +95,7 @@ Decompose the plan into a strictly ordered sequence of verifiable tasks. Each ta
    - **5. Definition of Done** — coverage threshold ≥ 80%, all checkpoints green
 6. **Run cross-artifact self-consistency check** (see Quality Bar below) — verify that your own output is internally consistent and traceable to spec+plan
 7. If consistency check fails: fix gaps before writing tasks.md
-8. Write `tasks.md` to `.agents-stack/<id>/tasks.md`
+8. Write `tasks.md` to `.agents-stack/workstream/<ws-id>_{YYYYMMDD}/tasks.md`
 9. Update `status.json`: set `phase: "tasks"`
 
 ## Quality Bar

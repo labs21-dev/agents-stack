@@ -3,7 +3,7 @@ name: spec
 description: Define what we build: goal, user stories, edge cases, BDD acceptance criteria.
 trigger: When no spec.md exists for the active workstream.
 inputs: [CONSTITUTION.md, .agents-stack/tracked-work.json, relevant reference docs]
-outputs: [.agents-stack/<id>/spec.md, .agents-stack/<id>/status.json]
+outputs: [.agents-stack/workstream/<ws-id>_{YYYYMMDD}/spec.md, .agents-stack/workstream/<ws-id>_{YYYYMMDD}/status.json]
 boundaries: Requirements definition only. No code. No architecture design.
 ---
 
@@ -91,7 +91,7 @@ failure-path AC is incomplete.
 2. Read `.agents-stack/tracked-work.json` for the active workstream ID
 3. Form spec from human intent — what is the core problem and solution?
 4. Identify edge cases explicitly: stress every boundary, empty state, error path, concurrency scenario
-5. Write `spec.md` to `.agents-stack/<id>/spec.md`
+5. Write `spec.md` to `.agents-stack/workstream/<ws-id>_{YYYYMMDD}/spec.md`
 6. Update `status.json`: set `phase: "spec"`
 
 ## Quality Bar
