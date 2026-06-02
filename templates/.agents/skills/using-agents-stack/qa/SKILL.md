@@ -73,10 +73,10 @@ For each AC from SPEC.md:
 
 Bugs found OUTSIDE spec-defined acceptance criteria. These are what the spec never asked about.
 
-| Severity | Attack ID | Dimension | Issue | Location | Evidence |
-|----------|-----------|-----------|-------|----------|----------|
-| P0 | ATK-001 | Authority | Internal API accessible without auth | `src/routes.ts:42` | curl output showing 200 with no token |
-| P1 | ATK-003 | Concurrency | Race condition produces duplicate records | `src/service.ts:88` | 2/10 concurrent requests created duplicates |
+| Severity | Attack ID | Lens | Code Observation | Issue | Evidence |
+|----------|-----------|------|-----------------|-------|----------|
+| P0 | ATK-001 | Authority | `auth.ts:42` + `handler.ts:67` — body userId overrides session | User A can act as User B by sending their token with userId set to B | curl output: 200 OK, response contains user B's data |
+| P1 | ATK-003 | Concurrency | `counter.ts:23` read-then-write, no lock | 50 concurrent /order + /refund calls produce counter off by 7 | Expected 100, got 93 |
 
 If no attack surface findings: state "No vulnerabilities found outside spec coverage."
 
@@ -164,69 +164,78 @@ If ANY reproduce step fails, verdict is **BLOCKED**. Do NOT proceed to AC verifi
 
 ## Attack Surface Generation
 
-The best bugs live outside acceptance criteria. Spec defines what SHOULD work — adversarial QA finds what DOES break. Before verifying ACs, read every artifact with an attack mindset and generate vectors the spec never considered.
+The best bugs live outside acceptance criteria. Spec defines what SHOULD work — adversarial QA finds what DOES break. Do NOT apply a fixed checklist of attack patterns. Read the actual codebase and derive attacks organically from what you observe.
+
+**Principle:** You are not testing against known vulnerability classes. You are reading code, understanding its boundaries, and asking: "Given how THIS specific system is built, what would break it?"
 
 ### Step 4: Surface Mapping
 
-Read spec.md, plan.md, tasks.md, handoff.md, and the actual codebase. Map the attack surface across 5 dimensions:
+Read spec.md, plan.md, tasks.md, handoff.md, and the actual codebase deeply. Use these 5 lenses for observation — not as checklists. Each lens tells you where to look; the code tells you what to attack.
 
-#### 1. Authority Boundaries
-- Where does the system check permissions?
-- Are there paths that bypass the check? (direct function calls, internal APIs, middleware gaps)
-- Can a lower-privilege role reach a higher-privilege code path?
-- Are permission gates actually enforced, or are they dead code / always-true guards?
+#### Lens 1: Authority
+Trace every permission check in the code. Where does authority live? Is it enforced at every entry point, or only at the outermost layer? What happens if you reach an inner function directly? Are there implicit trust assumptions between modules?
 
-#### 2. Data Flow Boundaries
-- Where does data cross trust boundaries? (user input → validation → storage → output)
-- Can malformed or malicious input propagate past validation?
-- Are there injection points? (SQL, command, path traversal, prototype pollution)
-- Can output from one phase poison the input of the next downstream phase?
+Read the actual auth logic. If it checks a session token, ask: what if the token is valid but for a different user? What if the check happens in middleware but the handler also accepts an internal `userId` parameter that overrides it? What if a downstream service trusts the caller without re-verifying?
 
-#### 3. Concurrency Boundaries
-- What shared state exists? (files, DB rows/transactions, caches, globals, singletons)
-- What happens with simultaneous writes to the same resource?
-- Are there TOCTOU (time-of-check-time-of-use) gaps?
-- Can a race condition produce inconsistent or corrupted state?
+**DO NOT** fall back to "check for missing auth middleware." Derive attacks from the specific authority model you observe in THIS codebase.
 
-#### 4. Resource Boundaries
-- What happens with extreme inputs? (empty, max-length, unicode, null bytes, deeply nested)
-- What happens under load? (connection exhaustion, timeout cascades, memory pressure)
-- Can one user's action exhaust resources for others? (unbounded allocations, missing rate limits)
+#### Lens 2: Data Flow
+Trace data from entry to exit. Where does user-controlled data touch the system? What transformations happen at each boundary? Are there points where the system assumes data is already valid because "the previous step handled it"? What happens when one component's output format changes — does the consumer notice, or silently misinterpret?
 
-#### 5. Compound Risk
-- Tasks independently correct but combined trigger failure
-- Read handoff.md `## Combinatorial Risks` — test EVERY hypothesis listed
-- Cross-reference dimensions: can a permission bypass (dim 1) + a race condition (dim 3) chain into data corruption?
-- Can a data flow injection (dim 2) + missing rate limit (dim 4) chain into resource exhaustion?
+Read how this specific system serializes, parses, validates, and passes data. If it deserializes JSON and passes the object between services, what unexpected fields survive? If two different parsers handle the same input format, are they consistent on edge cases?
+
+**DO NOT** just test for SQL injection and XSS. Derive attacks from the actual data transformations you observe.
+
+#### Lens 3: Concurrency
+Read the code for shared state — not just database rows, but in-memory caches, file writes, global counters, singleton instances. For each shared resource: what happens when two operations touch it simultaneously? Is there any locking, or does the code assume single-threaded execution?
+
+Read the actual state management. If the code reads a value, computes something, then writes it back — that's a window. If two different API endpoints modify the same entity, can their operations interleave? If there's a "check then act" pattern (e.g., check balance, then deduct), what happens between the check and the act?
+
+**DO NOT** just flag "possible race condition." Construct concrete sequences from the state transitions you observe.
+
+#### Lens 4: Resource
+Map every unbounded operation: allocations that grow with input size, loops without iteration limits, queues without depth limits, connections without timeouts, recursive calls without depth guards. For each: what is the cheapest input that makes it disproportionately expensive?
+
+Read the code for algorithmic complexity on user-controlled inputs. If a function loops over `input.items`, what happens with 100,000 items? If there's string concatenation in a loop, what's the maximum string length? If there's a regex, can user input trigger catastrophic backtracking?
+
+**DO NOT** just send large payloads. Derive resource attacks from the actual computational paths you observe.
+
+#### Lens 5: Compound
+Read handoff.md `## Combinatorial Risks`. Test every hypothesis listed with concrete sequences. Beyond that: cross-reference your observations from the other 4 lenses. Can an authority weakness (Lens 1) combine with a data flow assumption (Lens 2) to create a path that bypasses both? Can resource exhaustion (Lens 4) trigger during a concurrency window (Lens 3) to corrupt state that would normally be atomic?
+
+**DO NOT** list theoretical combinations. For each compound you identify, construct a concrete, executable sequence. If you cannot construct a concrete sequence, the compound risk is hypothetical — skip it.
 
 ### Step 5: Attack Vector Generation
 
-For each dimension where the surface is non-trivial, generate concrete, executable attack vectors:
+Based ONLY on your surface mapping observations, generate attack vectors that are **specific to this codebase**. Each attack must include the code observation that makes it possible.
 
-| Attack ID | Dimension | Attack Vector | Expected If Secure |
-|-----------|-----------|---------------|-------------------|
-| ATK-001 | Authority | Call internal API endpoint directly, bypassing auth middleware | 401/403 with no data leaked |
-| ATK-002 | Data Flow | Inject null byte `\x00` in user input field | Input rejected at validation boundary |
-| ATK-003 | Concurrency | Send 2 simultaneous write requests to shared resource | Both succeed with consistent final state, OR one fails cleanly with conflict error |
-| ATK-004 | Resource | Submit 10MB payload to field with no documented size limit | Rejected with clear 413/422, no server OOM |
-| ATK-005 | Compound | Bypass permission check (ATK-001) then race-write (ATK-003) on same resource | Still fails — permissions checked at write point, not just entry gate |
+Format:
 
-Generate at minimum 3 attack vectors per non-trivial dimension. If a dimension has no interesting surface, state it explicitly and move on.
+| Attack ID | Lens | Code Observation | Attack Action | Expected If Secure |
+|-----------|------|-----------------|---------------|-------------------|
+| ATK-001 | Authority | `auth.ts:42` checks session but `handler.ts:67` reads `req.body.userId` directly | Send valid token for user A, body `{"userId": "user-B"}` | 403 — userId in body is rejected or validated against session |
+| ATK-002 | Data Flow | `parser.ts:88` accepts `Record<string, any>`; `downstream.ts:34` spreads `...input` | Add unexpected `__proto__` or `constructor` key to input | Downstream rejects or ignores unknown keys |
+| ATK-003 | Concurrency | `counter.ts:23` read-then-write with no lock; called from two endpoints | Fire both endpoints simultaneously 50 times from parallel curl processes | Final counter value equals exact number of operations |
+
+**The "Code Observation" column is mandatory.** An attack without a specific code reference is speculation — delete it. Each observation must point to a real file and line (or function name) in the codebase.
+
+Generate attacks until every non-trivial surface from Step 4 has been exercised. There is no minimum or maximum count — the codebase determines how many attacks are meaningful. If a lens reveals nothing interesting, state it explicitly: "Lens X: no exploitable surface found — [brief reason]."
 
 ### Step 6: Execute Attacks
 
 Execute each attack vector against the live system:
 
-1. Run each attack
-2. Record actual result vs expected-if-secure
-3. Classify findings by severity:
+1. Run the attack exactly as specified in the Attack Action column
+2. Record actual result
+3. Compare against Expected If Secure
+4. Classify any deviation:
 
-| Severity | Criteria | Example |
-|----------|----------|---------|
-| **P0** | Data loss, security bypass, crash, silent corruption | Unauthorized access to protected resource; dead import causes startup failure |
-| **P1** | Functional defect triggered by attack | Race condition produces wrong output; null byte crashes handler |
-| **P2** | Degraded behavior, missing hardening (no immediate break) | No input size limit but didn't crash this time; missing rate limit |
-| **P3** | Advisory — spec gap, missing defense, undocumented assumption | No concurrency strategy defined; no error contract for this boundary |
+| Severity | Criteria |
+|----------|----------|
+| **P0** | Data loss, security bypass, crash, silent corruption |
+| **P1** | Functional defect triggered by attack — wrong output, inconsistent state |
+| **P2** | Degraded behavior — slower, noisier, more fragile, but not broken |
+| **P3** | Advisory — missing defense, undocumented assumption, no immediate break |
 
 ### Step 7: Error Propagation Verification
 
