@@ -1,117 +1,139 @@
 ---
 name: agents-md
-description: Create, update, and maintain AGENTS.md files following OpenAI best practices for agent instruction files. Standalone skill — not part of any pipeline.
-trigger: When the user asks to create, update, or maintain AGENTS.md. Also triggered when pipeline phases are added/removed/renamed and AGENTS.md needs to reflect the change.
+description: Extract implicit knowledge and audit AGENTS.md against four principles. Derives sections from domain, not from a fixed template.
+trigger: When the user asks to create, review, or optimize an AGENTS.md file.
 inputs:
-  - AGENTS.md (current)
-  - CONSTITUTION.md
-  - .agents-stack/reference/architecture.md
-  - .agents/skills/using-agents-stack/ (SKILL.md directory listing)
+  - AGENTS.md (current, if exists)
+  - CONSTITUTION.md (if exists)
+  - Project codebase / file tree
 outputs:
-  - AGENTS.md (updated)
-boundaries: Read-only except AGENTS.md. Does not modify SKILL.md files, reference docs, or pipeline artifacts. Reports to the orchestrator but operates independently.
+  - AGENTS.md (created or updated)
+  - Audit notes (optional — what was flagged and why)
+boundaries: Read-only on all files except AGENTS.md. Advises, does not dictate structure. Domain decides format.
 ---
 
 # Agents.md
 
-Create, update, and maintain AGENTS.md — the project-level agent instruction file that serves as the cold-start resume anchor and intent router. This is a standalone skill; it is NOT a pipeline phase and does not belong to `using-agents-stack`.
+Extract what an agent cannot discover from code and write it into AGENTS.md. Audit existing AGENTS.md against four principles. Sections emerge from the project's domain — there is no universal template.
 
-Follow OpenAI best practices for structure, ordering, and content selection.
+## Four Principles
 
-## OpenAI Best Practices
+These govern ALL AGENTS.md decisions. Derived from OpenAI best practices + clean philosophy.
 
-These principles govern ALL AGENTS.md edits:
+### 1. Implicit Knowledge Only
 
-1. **Static content first, dynamic content last** — maximize prompt cache hits. Invariants and paths at the top; intent routing at the bottom.
-2. **Every-task rules only** — anything that applies to all tasks belongs here. Single-task context does NOT.
-3. **No duplication of SKILL.md** — reference phase locations, do not copy phase contracts.
-4. **Pipeline details → architecture.md** — AGENTS.md shows the diagram and points to the full docs.
-5. **Concise and operational** — rules, not background essays.
+**Rule:** If an agent can discover it by reading code, running `ls`, or inspecting config files — don't write it.
 
-## AGENTS.md Structure
+| Write (implicit) | Don't write (discoverable) |
+|-----------------|---------------------------|
+| Which directory is the canonical state root (vs archive) | File tree structure (`ls` already shows this) |
+| WHY a non-standard tool was chosen (`uv` not `pip`) | That React is used (`package.json` already says this) |
+| Pipeline phase ORDER and checkpoint positions | Individual phase contracts (each SKILL.md already defines these) |
+| Intent routing logic | Domain skill names (discoverable from skills directory) |
+| Commit message convention (`type(scope): description`) | Lint rules (linter already enforces these) |
 
-The file must follow this order (per OpenAI's 8-point template, adapted for agents-stack):
+**Test:** Delete the content. Run the agent on the project. If the agent still does the right thing → the content was discoverable.
 
-| Section | Required | Content |
-|---------|----------|---------|
-| **Project purpose** | ✅ | One sentence: what this repo is and does |
-| **Key Paths** | ✅ | Where to find workstream artifacts, registry, reference docs, skills |
-| **Core Invariants** | ✅ | 6 non-negotiable rules (files beat memory, one workstream, Generator ≠ Auditor, cold start, iteration ≠ retry, three-checkpoint rhythm) |
-| **Safety / Do Not Do** | ✅ | Operational guardrails (blocking gates, self-review, reference/, spec-first, plan-first, orchestrator role) |
-| **Quick Resume** | ✅ | Cold-start protocol: which files to read in what order |
-| **Pipeline** | ✅ | Pipeline diagram with checkpoints, "load SKILL.md before executing" rule, pointer to architecture.md for full docs |
-| **Commit & PR** | ✅ | Conventional commit style, pre-commit checks, pre-PR checks |
-| **Intent Routing** | ✅ | Pipeline work → using-agents-stack, ad-hoc → direct execution, skill-specific → platform resolver |
+### 2. Domain Derives Format
 
-Sections 3-5 (coding conventions, test commands, tooling rules) from the OpenAI template are N/A for agents-stack (methodology project, not application code).
+**Rule:** Sections emerge from what the project DOES, not from a template. A design project doesn't need a pipeline section. A research project doesn't need commit conventions.
 
-## What Goes In vs What Stays Out
+Common domain archetypes and their natural sections:
 
-### ✅ Goes IN AGENTS.md (stable, every-task rules)
+| Domain | Natural Sections |
+|--------|-----------------|
+| **Code project** (app, library, service) | Tech stack, dev commands, invariants, boundaries, commit conventions |
+| **Methodology / harness** (agents-stack) | Pipeline, checkpoints, invariants, safety rules, cold-start protocol |
+| **Design system** | Component library, tokens, principles, review protocol |
+| **Research / knowledge base** | Scope, methodology, sources, output format |
+| **AI agent / infra** | Agent architecture, model routing, tool conventions, safety boundaries |
 
-| Category | Examples |
-|----------|----------|
-| File paths | Where artifacts live, where skills live |
-| Non-negotiable rules | Invariants, safety rules |
-| Cold-start protocol | Resume steps |
-| Pipeline overview | Diagram + "load SKILL.md" rule |
-| Commit conventions | Type format, pre-commit checks |
-| Intent routing | Pipeline vs ad-hoc |
+**Start by asking:** "What does an agent working on this project MOST need to know that it can't discover?" The answer IS the section list.
 
-### ❌ Stays OUT (dynamic, single-task, or lives elsewhere)
+### 3. Length as Smell
 
-| Category | Where it lives instead |
-|----------|----------------------|
-| Phase contracts (inputs, outputs, workflow) | Each phase's SKILL.md |
-| Full state machine rules | `references/state-machine.md` |
-| Detailed checkpoint mechanics | `reference/architecture.md` |
-| Current workstream ID | `.agents-stack/tracked-work.json` |
-| Current phase/attempt/layer | `.agents-stack/<id>/status.json` |
-| Specific skill intent triggers | Platform's AGENTS.md (contextual skill resolver) |
+**Rule:** ~60 lines is ideal. >150 is a warning. >300 is almost certainly redundant with discoverable content.
+
+Not a hard limit — a diagnostic. When AGENTS.md grows:
+- Check: is this content discoverable from code?
+- Check: is this content duplicated in another referenced file (SKILL.md, architecture.md, README)?
+- Check: would the agent still succeed if this section were removed?
+
+### 4. Compliance Ceiling
+
+**Rule:** AGENTS.md compliance rate is ~70%. Rules that MUST be enforced (security, data integrity) need hooks or tool-level guards, not just AGENTS.md entries.
+
+| AGENTS.md is right for | Hooks/tools are right for |
+|------------------------|--------------------------|
+| "Prefer `uv` over `pip`" | "NEVER push to main" |
+| "Tests must pass before commit" | "NEVER commit secrets" |
+| "Load SKILL.md before executing phase" | "NEVER modify reference/ outside release" |
+
+If a rule appears in both the AGENTS.md Safety section AND a tool hook → the AGENTS.md entry is still valuable (it explains WHY), but don't rely on it for enforcement.
 
 ## Workflow
 
-### When Creating a New AGENTS.md
+### Creating AGENTS.md from Scratch
 
-1. Read `CONSTITUTION.md` — extract all invariants, safety rules, and workflow rules
-2. Read `.agents-stack/reference/architecture.md` — extract pipeline diagram, checkpoint system summary
-3. List `.agents/skills/using-agents-stack/` — confirm which phases and utility skills exist
-4. Write AGENTS.md following the structure table above
-5. Verify: every section in the structure table is present, no SKILL.md content is duplicated, static sections precede dynamic sections
+1. **Read the project** — codebase, config files, directory structure, any CONSTITUTION.md
+2. **Ask the domain question:** "What does this project DO?" → classify into an archetype
+3. **Extract implicit knowledge:** What would a fresh agent get WRONG if it only read the code?
+4. **Derive sections:** From the domain archetype + implicit knowledge gaps, derive 4-6 sections
+5. **Write concisely:** Target ~60 lines. Every line must pass the "would the agent discover this?" test
+6. **Tag the compliance ceiling:** If any rule needs absolute enforcement, note it for hooks
 
-### When Updating an Existing AGENTS.md
+### Auditing an Existing AGENTS.md
 
-1. Read current `AGENTS.md`
-2. Identify what changed (new phase? renamed phase? new invariant? new safety rule?)
-3. Read `CONSTITUTION.md` and `architecture.md` to confirm the change is reflected there first
-4. Apply the minimal edit — change only what's needed, preserve static ordering
-5. If a phase was added/removed: update the pipeline diagram, update artifact list in Key Paths, do NOT add a phase row to a table (that's what architecture.md is for)
-6. If an invariant changed: update the Core Invariants section, keep numbering stable
-7. Verify: no duplication introduced, static sections still precede dynamic sections, OpenAI principles still hold
+1. **Read AGENTS.md + codebase**
+2. **Run the 4-principle audit.** For each section and each line, answer:
 
-### Common Update Scenarios
+| Question | If YES | If NO |
+|----------|--------|-------|
+| Is this implicit (agent can't discover from code)? | Keep | **Flag for removal** |
+| Is this duplicated in another referenced file? | **Flag for removal** | Keep |
+| Is this domain-relevant (does this project actually DO this)? | Keep | **Flag for removal** |
+| Is this a hard enforcement rule? | **Note: needs hook** | AGENTS.md is sufficient |
 
-| Trigger | What to Update in AGENTS.md |
-|---------|---------------------------|
-| New pipeline phase added | Pipeline diagram, Key Paths artifact list |
-| Phase renamed | Pipeline diagram, Key Paths artifact list |
-| New invariant added | Core Invariants (append, keep numbering) |
-| New safety rule | Safety / Do Not Do (append) |
-| New utility skill | No change — utility skills are not pipeline phases and don't appear in the diagram |
-| Commit convention change | Commit & PR section |
-| Pipeline restructuring | Pipeline diagram + Key Paths; defer full docs to architecture.md |
+3. **Check length:** If >150 lines, flag sections that fail the implicit knowledge test
+4. **Check ordering:** Static content (invariants, safety, commands) before dynamic content (routing, phase-specific details)?
+5. **Report findings** — not as commands, as observations with rationale
 
-## Verification
+### Optimizing for Prompt Cache
 
-Before declaring done, verify:
+Static content at the top maximizes cache hits. Dynamic content (routing, workstream references) goes at the bottom or in external files.
 
-1. **Structure check:** All 8 required sections present (purpose, paths, invariants, safety, resume, pipeline, commit, routing)
-2. **Static-first check:** Invariants and safety rules appear before Pipeline; Intent Routing is the last section
-3. **No duplication check:** No phase-specific input/output/workflow details that duplicate SKILL.md frontmatter
-4. **Pipeline accuracy check:** Diagram matches the phases listed in `.agents/skills/using-agents-stack/` (excluding utility skills: prune-review, reflect, agents-md)
-5. **Consistency check:** Invariants match CONSTITUTION.md; pipeline matches architecture.md
-6. **Cold-start check:** A reader of AGENTS.md alone can find every key file path needed to resume a workstream
+The ideal order (emerges naturally from the principles, not a template):
+1. What this is (1-2 sentences)
+2. Commands the agent will run repeatedly (`pnpm dev`, `pytest -v`)
+3. Invariants and safety rules (won't change between sessions)
+4. Workflow / method (how work flows — moderately stable)
+5. Exit / shipping rules (commit style, PR checks)
+6. Routing (intent mapping — most likely to change as skills evolve)
+
+## Audit Report Format
+
+When auditing, produce findings in this format:
+
+```markdown
+## AGENTS.md Audit
+
+**Project:** [name] | **Domain:** [archetype] | **Lines:** [N]
+
+### Implicit Knowledge Gaps
+[What should be in AGENTS.md but isn't — agent would get this wrong]
+
+### Discoverable Content
+[What's in AGENTS.md but agent can find from code — candidate for removal]
+| Section | Content | Discoverable From | Recommendation |
+|---------|---------|------------------|----------------|
+
+### Length Check
+[Current lines vs ~60 target. Which sections are the biggest contributors?]
+
+### Compliance Notes
+[Which rules need hooks, not just AGENTS.md entries?]
+```
 
 ## Done
 
-AGENTS.md exists and passes all 6 verification checks. Cold-start agent can resume from files alone.
+AGENTS.md exists (or audit report delivered). Every line passes the implicit knowledge test. Sections emerge from domain, not template. Static content precedes dynamic. Compliance ceiling noted where relevant.
