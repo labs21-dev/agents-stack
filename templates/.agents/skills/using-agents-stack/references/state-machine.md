@@ -64,6 +64,7 @@ Phases execute in strict linear order. Each has a completion signal — an artif
 
 When `state_machine: "on"`:
 
+0. **No active workstream?** → Create workstream. Set `current_phase: "goal"`. Dispatch goal.
 1. Read `status.json.current_phase`
 2. Check: is the current phase's completion signal met?
    - **YES** → Advance `current_phase` to the next phase. Dispatch that phase.

@@ -44,12 +44,13 @@ When toggling OFF → set `status.json.state_machine = "off"`. When toggling ON 
 goal → spec → plan → [CHECK #1: verify-architecture] → tasks → [CHECK #2: analyze] → implement → [CHECK #3: qa] → release
 ```
 
-This orchestrator activates when `state_machine: "on"` AND a workstream is active in `tracked-work.json`.
+This orchestrator activates when `state_machine: "on"` AND (a workstream is active in `tracked-work.json` OR user expresses pipeline development intent).
 
 ## Routing (State Machine ON)
 
 **Single logic — no intent detection, no contextual triggers, no artifact-driven routing:**
 
+0. **No active workstream?** → Create workstream directory. Initialize `status.json` with `current_phase: "goal"`, `state_machine: "on"`. Dispatch goal.
 1. Read `status.json.current_phase`
 2. Read the phase's completion signal (see `references/state-machine.md` Phase Table)
 3. **Completion signal met?**
