@@ -19,4 +19,14 @@ This document is the project's technical charter. It defines invariants and rule
 - Change requirements → update spec first. Change architecture → update plan first.
 - Project milestones and workstream backlog are defined in `ROADMAP.md`
 
+## State Machine Mode
+
+Pipeline enforcement is binary. No fuzzy intent detection, no contextual override.
+
+`status.json.state_machine`:
+- `"on"` — Pipeline strictly enforced. Phases execute in linear order. Agent cannot skip or bypass. Say "turn off state machine" to exit.
+- `"off"` — No pipeline interference. Free-form execution.
+
+Default: `"on"` when a workstream is active. Toggle anytime.
+
 <!-- Add project-specific tech stack, coding standards, and architectural constraints below -->
