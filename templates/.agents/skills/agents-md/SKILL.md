@@ -1,6 +1,6 @@
 ---
 name: agents-md
-description: Create, update, and maintain AGENTS.md files following OpenAI best practices for agent instruction files.
+description: Create, update, and maintain AGENTS.md files following OpenAI best practices for agent instruction files. Standalone skill — not part of any pipeline.
 trigger: When the user asks to create, update, or maintain AGENTS.md. Also triggered when pipeline phases are added/removed/renamed and AGENTS.md needs to reflect the change.
 inputs:
   - AGENTS.md (current)
@@ -9,12 +9,14 @@ inputs:
   - .agents/skills/using-agents-stack/ (SKILL.md directory listing)
 outputs:
   - AGENTS.md (updated)
-boundaries: Read-only except AGENTS.md. Does not modify SKILL.md files, reference docs, or pipeline artifacts. Defers to orchestrator for pipeline structure changes.
+boundaries: Read-only except AGENTS.md. Does not modify SKILL.md files, reference docs, or pipeline artifacts. Reports to the orchestrator but operates independently.
 ---
 
-# Agents.md Maintenance Worker
+# Agents.md
 
-Maintain AGENTS.md — the project-level agent instruction file that serves as the orchestrator's resume anchor and intent router. Follow OpenAI best practices for structure, ordering, and content selection.
+Create, update, and maintain AGENTS.md — the project-level agent instruction file that serves as the cold-start resume anchor and intent router. This is a standalone skill; it is NOT a pipeline phase and does not belong to `using-agents-stack`.
+
+Follow OpenAI best practices for structure, ordering, and content selection.
 
 ## OpenAI Best Practices
 
