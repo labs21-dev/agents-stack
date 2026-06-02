@@ -65,9 +65,13 @@ Conventional commits: `type(scope): description`. Types: `feat`, `fix`, `refacto
 
 ## Intent Routing
 
-| User Intent | Route To | Action |
-|-------------|----------|--------|
-| **Pipeline work** — spec, plan, tasks, implement, qa, release, or active workstream with development intent | `using-agents-stack` | Load orchestrator; it routes to the correct phase based on artifact state |
-| **Ad-hoc development** — one-off bugfix, feature, refactor, question, exploration (no workstream context) | **Direct execution** | Implement directly or load the appropriate domain skill |
+Pipeline enforcement is binary, controlled by `status.json.state_machine`:
+
+| `state_machine` | Behavior |
+|-----------------|----------|
+| `"on"` (default) | Linear pipeline enforced. All requests route through orchestrator. Phases execute in strict order — no skipping, no reordering, no bypass. |
+| `"off"` | No pipeline interference. Execute ad-hoc. |
+
+Toggle via `/state-machine on|off` or natural language "turn off state machine" / "stop using pipeline".
 
 For skill-specific intents (code review, frontend QA, design review, adversarial QA, complexity audit, reflect/learn), see the Contextual Skill Resolver in your platform's AGENTS.md.

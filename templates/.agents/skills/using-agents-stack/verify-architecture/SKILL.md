@@ -1,7 +1,6 @@
 ---
 name: verify-architecture
 description: Checkpoint #1 — Architecture vs Goal verification gate. Validates every architecture decision serves a spec requirement before task breakdown begins.
-trigger: When plan.md exists and Architecture Trace has not been verified for this workstream.
 inputs:
   - goal.md
   - spec.md
@@ -157,4 +156,4 @@ FAIL: `blocking_gate` set with gap details + `blocked_reason`.
 
 `arch-report.md` exists with PASS/FAIL verdict. If PASS: `status.json.phase_gates.verify_architecture.passed = true` and `phase_gates.tasks.entry_ok = true`. If FAIL: blocking_gate set, route to plan.
 
-**PASS → Next: tasks**　|　**FAIL → Route to plan**
+

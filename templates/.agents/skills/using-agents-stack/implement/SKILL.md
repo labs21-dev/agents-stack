@@ -1,7 +1,6 @@
 ---
 name: implement
 description: RED-GREEN-REFACTOR implementation per task. Each task passes before next. Produces handoff.md with reproducible evidence.
-trigger: When tasks.md exists and handoff.md does not, or retry after Layer 1 rework.
 inputs:
   - CONSTITUTION.md
   - spec.md
@@ -262,4 +261,4 @@ Before declaring implement phase complete, verify ALL gates:
 
 If any gate is unmet, the implement phase is NOT done. Fix the gate before declaring completion.
 
-**PASS → Next: qa**　|　**FAIL → Rollback to L1: re-implement / L2: plan / L3: spec**
+

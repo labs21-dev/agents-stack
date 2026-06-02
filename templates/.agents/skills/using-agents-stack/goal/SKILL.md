@@ -1,7 +1,6 @@
 ---
 name: goal
 description: Define the goal: what problem we solve, for whom, and what success looks like. The directional anchor that architecture and specs must serve.
-trigger: When no goal.md exists for the active workstream.
 inputs:
   - CONSTITUTION.md
   - .agents-stack/tracked-work.json
@@ -80,5 +79,3 @@ What limits our design space? Budget, time, technical, organizational.
 ## Done
 
 `goal.md` exists with problem, audience, success criteria, non-goals, and constraints. `status.json` reflects goal phase.
-
-**PASS → Next: spec**

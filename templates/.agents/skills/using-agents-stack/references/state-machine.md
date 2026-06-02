@@ -10,6 +10,25 @@ Goal-QA-Driven phase model. Orchestrator reads these rules, decides next phase, 
 4. Cold start must work. A new agent recovers from files alone.
 5. Iteration ≠ Retry. Retry fixes execution within same contract. Iteration changes spec/plan.
 
+## State Machine Mode
+
+Pipeline enforcement is binary. There is no fuzzy intent detection, no contextual override, no ad-hoc bypass.
+
+| Mode | Behavior |
+|------|----------|
+| `state_machine: "on"` | Pipeline strictly enforced. The orchestrator advances phases linearly — one step at a time. The agent cannot skip, reorder, or bypass phases. User must explicitly say "turn off state machine" to exit. |
+| `state_machine: "off"` | No pipeline enforcement. Agent executes freely. No orchestrator routing. |
+
+**Default:** `"on"` when a workstream is active. User can toggle via `/state-machine on|off` or plain language "turn off state machine" / "stop using pipeline".
+
+When `state_machine: "on"`, every user request is intercepted: the orchestrator checks the current phase, and if it's not yet complete, routes there. The user's intent does not override the pipeline — the pipeline is the intent.
+
+```
+User: "implement the login feature"
+Orchestrator: "State machine is ON. Current phase: analyze.
+              Complete analyze first. Do you want to proceed with analyze?"
+```
+
 ## Artifact Precedence
 
 When files disagree, higher-precedence artifact wins:
@@ -19,91 +38,44 @@ When files disagree, higher-precedence artifact wins:
 3. tasks.md
 4. plan.md
 5. spec.md
-6. status.json
-7. .agents-stack/tracked-work.json
+6. goal.md
+7. status.json
+8. .agents-stack/tracked-work.json
 
 ## Phase Table
 
-| Phase | Evidence | Next Step |
-|-------|----------|-----------|
-| uninitialized | Missing or empty tracked-work.json | Create first workstream |
-| goal | goal.md exists | Route to spec |
-| spec | spec.md exists | Route to plan |
-| plan | plan.md exists + architecture trace complete | Route to tasks |
-| verify-architecture | arch-report.md exists with PASS verdict | Route to tasks |
-| tasks | tasks.md exists | Route to analyze (Checkpoint #2: consistency gate) |
-| analyze | Checkpoint #2 passed | Route to implement |
-| implement | handoff.md exists | Route to qa (Checkpoint #3: adversarial verification) |
-| qa | qa-report.md exists | Evaluate verdict |
-| release | changelog.md exists + archived | Complete |
-| awaiting_human | status.json blocked_reason set | Human decision |
-| escalated_to_human | max depth/attempt exceeded | Human decision |
-| archived | Evidence in .agents-stack/archive/ | Next workstream |
+Phases execute in strict linear order. Each has a completion signal — an artifact existence check + optional verdict. No phase can be entered before all prior phases are complete.
+
+| # | Phase | Completion Signal |
+|---|-------|-------------------|
+| 1 | goal | `goal.md` exists with Problem + Success Criteria + Non-Goals |
+| 2 | spec | `spec.md` exists with BDD ACs + edge cases |
+| 3 | plan | `plan.md` exists with Architecture Trace (every decision traces to goal/spec) |
+| 4 | verify-architecture | `arch-report.md` exists with verdict PASS |
+| 5 | tasks | `tasks.md` exists with 5-dimension verification metadata |
+| 6 | analyze | `report.md` exists with verdict PASS |
+| 7 | implement | `handoff.md` exists, all tasks `[✅] done`, review approved |
+| 8 | qa | `qa-report.md` exists with verdict PASS |
+| 9 | release | `changelog.md` exists, workstream archived |
+
+**Checkpoint positions:** verify-architecture = Checkpoint #1 (before tasks). analyze = Checkpoint #2 (before implement). qa = Checkpoint #3 (before release). Every ~2 phases a verification gate isolates risk.
 
 ## Transition Rules
 
-### Contextual Trigger (overrides artifact check at any point)
+When `state_machine: "on"`:
 
-Before artifact-driven routing, detect user natural language intent:
-- "goal/define direction" → route goal (create workstream if needed)
-- "spec/think through" → route spec (create workstream if needed)
-- "architecture/plan" → route plan
-- "tasks/breakdown" → route tasks
-- "implement/code" → route implement
-- "QA/verify/test" → route qa
-- "release/ship" → route release
-- "review code" → load clean-philosophy skill (non-pipeline)
-- "browser test/UI check" → load frontend-qa skill (non-pipeline)
-- "design review" → load frontend-design skill (non-pipeline)
-- "complexity audit/prune" → dispatch prune-review (non-pipeline)
-- No clear intent → fall through to artifact-driven routing
+1. Read `status.json.current_phase`
+2. Check: is the current phase's completion signal met?
+   - **YES** → Advance `current_phase` to the next phase. Dispatch that phase.
+   - **NO** → Re-dispatch the current phase (it's not done).
+3. If all phases complete (after release) → `current_phase: null`, archive workstream.
 
-### Forward Pipeline
+If a phase produces a FAIL verdict (arch-report.md, report.md, qa-report.md):
+- `status.json.blocking_gate` is set
+- Phase does NOT advance
+- Orchestrator stays on current phase until user resolves (re-run or route back to earlier phase)
 
-- No goal.md → route goal
-  - goal worker reads CONSTITUTION.md, tracked-work.json, defines goal.md (problem, success criteria, non-goals, constraints)
-- goal.md exists, no spec.md → route spec
-  - spec worker reads goal.md + CONSTITUTION.md, derives user stories and ACs from goal, writes spec.md
-- spec.md exists, no plan.md → route plan
-  - plan worker reads goal.md + spec.md, designs architecture with Architecture Trace, writes plan.md
-- plan.md exists, no tasks.md → route verify-architecture (Checkpoint #1)
-  - verify-architecture worker reads spec.md + plan.md, produces arch-report.md
-  - validates Architecture Trace completeness + goal mapping + over-engineering signals
-  - PASS → set `phase_gates.tasks.entry_ok = true`, route tasks
-  - FAIL → route back to plan (fix architecture before task breakdown)
-- `phase_gates.tasks.entry_ok = true`, no tasks.md → route tasks
-  - tasks worker reads spec+plan, breaks into tasks with 5D verification, writes tasks.md
-- tasks.md exists, no handoff.md → route analyze (Checkpoint #2: spec×plan×tasks consistency gate)
-  - orchestrator checks spec+plan+tasks consistency before dispatching implement
-  - gate passes → set `phase_gates.implement.entry_ok = true`, route implement
-  - minor gaps → route tasks with fix suggestions
-  - major gaps → route analyze (human or automated cleanup)
-  - severe gaps → route back to spec or plan
-- analyze gate passed, no handoff.md → route implement
-  - implement worker reads tasks, implements each with RED-GREEN-REFACTOR cycle, writes handoff.md
-  - each task must clear Inter-Task Gate before next task (see implement/SKILL.md)
-  - all tasks done → set `phase_gates.implement.handoff_written = true`
-  - review agent passes → set `phase_gates.implement.review_approved = true`
-  - if build/startup fails: implement_failed, orchestrator may retry
-- handoff.md exists AND `phase_gates.implement.handoff_written = true` AND `phase_gates.implement.review_approved = true` → route qa
-  - qa worker independently reproduces and verifies against SPEC
-  - verdict: PASS, FAIL, or BLOCKED
-  - on FAIL: trace to layer (L1 code, L2 architecture, L3 spec)
-
-### Post-QA
-
-- PASS → route release
-- FAIL + Layer 1 (code) + attempt < max_attempts → route implement (retry)
-- FAIL + Layer 2 (architecture) → route plan (re-plan)
-- FAIL + Layer 3 (spec) → route spec (re-spec)
-- FAIL + attempt >= max_attempts → escalated_to_human
-- BLOCKED → awaiting_human
-
-### Post-Release
-
-- changelog.md exists → archive workstream
-- Update tracked-work.json
-- Ready for next workstream
+This is the ONLY routing logic. There is no artifact-driven routing, no intent detection, no contextual triggers. The phase table IS the routing table.
 
 ## Three-Layer Rework
 
@@ -112,6 +84,8 @@ Before artifact-driven routing, detect user natural language intent:
 | L1: Code | Implementation error, missed edge case | implement | Low |
 | L2: Architecture | API/DB design insufficient | plan | Medium |
 | L3: Spec | Requirement/AC missing or wrong | spec | High |
+
+When rework is needed: set `current_phase` to the layer's phase, re-generate downstream artifacts.
 
 ## Budget Exhaustion
 

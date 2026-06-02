@@ -1,7 +1,6 @@
 ---
 name: qa
 description: Independently verify implementation against SPEC acceptance criteria. Generator ≠ Auditor.
-trigger: When handoff.md exists and qa-report.md does not.
 inputs:
   - CONSTITUTION.md
   - spec.md
@@ -290,4 +289,4 @@ Quick scan to catch anything implement missed:
 
 `qa-report.md` exists with honest PASS/FAIL/BLOCKED verdict. Layer assessment complete. Rework destination clear.
 
-**PASS → Next: release**　|　**FAIL → Rollback to L1: implement / L2: plan / L3: spec**　|　**BLOCKED → awaiting_human**
+

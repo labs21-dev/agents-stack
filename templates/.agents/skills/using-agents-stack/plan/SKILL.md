@@ -1,7 +1,6 @@
 ---
 name: plan
 description: Design architecture: components, API schema, DB model, impact analysis, test strategy.
-trigger: When spec.md exists and plan.md does not.
 inputs:
   - CONSTITUTION.md
   - spec.md
@@ -201,5 +200,3 @@ Map every acceptance criterion to a concrete test approach.
 ## Done
 
 `plan.md` exists with architecture decisions, API design, DB schema, real-file impact analysis, and AC-mapped test strategy. `status.json` reflects plan phase.
-
-**PASS → Next: tasks**　|　**FAIL → Rollback to plan**

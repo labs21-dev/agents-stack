@@ -1,7 +1,6 @@
 ---
 name: analyze
 description: Pre-implementation alignment gate. Checks spec / plan / tasks consistency and plan vs codebase reality before code is written.
-trigger: When tasks.md exists and analyze has not passed for this workstream. Also triggered on L2/L3 reroute from implement or qa.
 inputs:
   - spec.md
   - plan.md
@@ -187,4 +186,4 @@ Update `status.json`:
 
 `report.md` exists with PASS/FAIL verdict. If PASS: `status.json.phase_gates.analyze.passed` = true. If FAIL: blocking_gate set, correct route identified.
 
-**PASS → Next: implement**　|　**FAIL → Rollback to L1: tasks / L2: plan / L3: spec**
+

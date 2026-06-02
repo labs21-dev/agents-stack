@@ -1,7 +1,6 @@
 ---
 name: tasks
 description: Break plan into minimal verifiable tasks with 5-dimension verification metadata.
-trigger: When plan.md exists and tasks.md does not.
 inputs:
   - spec.md
   - plan.md
@@ -142,4 +141,4 @@ Run this check **before** writing tasks.md. If you find gaps, fix them by adding
 
 `tasks.md` exists with strictly sequential tasks, each having complete 5-dimension verification metadata. Cross-artifact consistency check passed. First task is scaffold test infrastructure. `status.json` reflects tasks phase.
 
-**PASS → Next: analyze**　|　**FAIL → Rollback to tasks**
+

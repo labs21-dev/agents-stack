@@ -25,6 +25,7 @@ qa-report.md > handoff.md > tasks.md > plan.md > spec.md > goal.md > status.json
 │   ├── spec.md          # SPEC phase 產出
 │   ├── plan.md          # PLAN phase 產出
 │   ├── arch-report.md   # Checkpoint #1: Architecture vs Goal 驗證報告
+│   ├── report.md        # Checkpoint #2: SPEC×PLAN×TASKS 一致性驗證報告
 │   ├── tasks.md         # TASKS phase 產出
 │   ├── handoff.md       # IMPLEMENT phase 產出
 │   ├── qa-report.md     # QA phase 產出
@@ -38,6 +39,16 @@ qa-report.md > handoff.md > tasks.md > plan.md > spec.md > goal.md > status.json
 ├── insights/            # Session 回顧
 ├── archive/             # 已封存工作流
 └── scripts/             # 工具腳本
+
+## State Machine 模式
+
+Pipeline 強制執行是二元的。沒有 fuzzy intent detection，沒有 contextual override，沒有 ad-hoc bypass。
+
+`status.json.state_machine`:
+- `"on"` — Pipeline 嚴格執行。Orchestrator 按線性 phase 順序推進，一步一 phase。Agent 不能跳過、重排或繞過任何 phase。用戶必須明確說「關掉 state machine」才能退出。
+- `"off"` — 無 pipeline 干涉。Agent 自由執行。Orchestrator 不介入路由。
+
+預設值：當 workstream active 時為 `"on"`。可以隨時切換。
 
 ## 工作流規則
 

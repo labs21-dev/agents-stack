@@ -5,7 +5,8 @@ description: Root orchestrator. Reads durable state, routes to one phase, dispat
 
 # Orchestrator — Goal-QA-Driven v3
 
-Read durable state from `.agents-stack/`, decide the next phase, dispatch a fresh worker.
+Read durable state from `.agents-stack/`, decide the next phase based on linear progression, dispatch a fresh worker.
+
 Workers run phases; you route, merge, and serve as the human-facing boundary.
 
 ## ⛔ ROLE INVARIANTS — these override all other delegation rules
@@ -23,69 +24,72 @@ Workers run phases; you route, merge, and serve as the human-facing boundary.
 | Orchestrator | Update status.json, check gates | Skip gate checks |
 | Orchestrator | Dispatch independent code review after implement | Self-approve handoff |
 
-## Pipeline Trigger
+## State Machine Mode
 
-`goal → spec → plan → [CHECK #1: Arch vs Goal] → tasks → [CHECK #2: ANALYZE] → implement → [CHECK #3: QA] → release`
+Check `status.json.state_machine` on every message:
 
-This orchestrator activates when:
-- The user explicitly invokes a pipeline phase: spec, plan, tasks, implement, qa, release
-- Active `.agents-stack/workstream/<ws-id>_{YYYYMMDD}/` artifacts exist + development intent
-- The user references workstream operations: "start a workstream", "new feature", "track this work", "run the pipeline"
+| Value | Behavior |
+|-------|----------|
+| `"on"` | Linear pipeline enforced. Route by phase order only. |
+| `"off"` | No pipeline interference. Do NOT route, do NOT enforce. Execute ad-hoc. |
+| missing / undefined | Treat as `"on"` (default when workstream is active) |
 
-Ad-hoc development (one-off bugfix, questions, exploration) → do NOT route through this orchestrator. Execute directly or load the appropriate domain skill.
+User can toggle at any time: `/state-machine on|off` or natural language "turn off state machine" / "stop using pipeline" / "disable pipeline enforcement".
+
+When toggling OFF → set `status.json.state_machine = "off"`. When toggling ON → set `status.json.state_machine = "on"`.
+
+## Pipeline
+
+```
+goal → spec → plan → [CHECK #1: verify-architecture] → tasks → [CHECK #2: analyze] → implement → [CHECK #3: qa] → release
+```
+
+This orchestrator activates when `state_machine: "on"` AND a workstream is active in `tracked-work.json`.
+
+## Routing (State Machine ON)
+
+**Single logic — no intent detection, no contextual triggers, no artifact-driven routing:**
+
+1. Read `status.json.current_phase`
+2. Read the phase's completion signal (see `references/state-machine.md` Phase Table)
+3. **Completion signal met?**
+   - YES → Advance `current_phase` to next phase in the table. Update `status.json`. Dispatch the next phase.
+   - NO → Re-dispatch `current_phase`. The phase is not done.
+4. If `current_phase` is the last phase (release) AND completion signal met → archive. Set `current_phase: null`.
+5. If `status.json.blocking_gate` is set → STOP. Do not advance. Report to user.
+
+**Phase completion signals (from state-machine.md):**
+
+| Phase | Check |
+|-------|-------|
+| goal | `goal.md` exists with Problem + SCs + Non-Goals |
+| spec | `spec.md` exists with BDD ACs + edge cases |
+| plan | `plan.md` exists with Architecture Trace table (non-empty) |
+| verify-architecture | `arch-report.md` exists AND verdict = PASS |
+| tasks | `tasks.md` exists with 5-dimension verification metadata |
+| analyze | `report.md` exists AND verdict = PASS |
+| implement | `handoff.md` exists, all tasks `[✅] done`, review approved |
+| qa | `qa-report.md` exists AND verdict = PASS |
+| release | `changelog.md` exists, workstream archived |
 
 ## Blocking Gates
 
-⛔ Cannot be skipped. If a gate is unmet → STOP, write reason to `status.json.blocked_reason`.
-
-| Checkpoint | Gate |
-|------------|------|
-| Before entering tasks | `phase_gates.tasks.entry_ok` = true |
-| Before entering implement | `phase_gates.implement.entry_ok` = true |
-| Between implement tasks | `phase_gates.implement.current_task_verified` = true |
-| Before writing handoff | All tasks `[✅] done` |
-| Before leaving implement | `handoff_written` = true + `review_approved` = true |
-| Before entering qa | All implement phase gates passed |
-
-## Routing
-
-### Decision Order (full details in `references/state-machine.md`)
-
-1. Read `tracked-work.json`, `status.json`, strongest artifact
-2. Check `blocking_gate`: blocked → fix or escalate; unfixable → `awaiting_human`, STOP
-3. No active workstream → prompt user to create one (spec entry point)
-4. Intent detection → see AGENTS.md Contextual Skill Resolver
-4a. Before routing to tasks: check `phase_gates.tasks.entry_ok`. If false → dispatch verify-architecture worker. Worker validates plan.md Architecture Trace against spec.md, scans for over-engineering signals. If PASS → set `phase_gates.tasks.entry_ok = true`. If FAIL → route to plan for revision.
-5. Route by artifact existence:
-   - Missing `goal.md` → `goal` ｜ Missing `spec.md` → `spec` ｜ Missing `plan.md` → `plan`
-   - Missing `tasks.md` → `tasks` ｜ Missing `report.md` → `analyze`
-   - Missing `handoff.md` → `implement` (analyze must be passed)
-   - Missing `qa-report.md` → `qa` ｜ QA_PASS → `release`
-6. Before routing to implement: `phase_gates.analyze.passed` must be true, else route to `analyze`
-7. Post-QA: PASS → `release` ｜ FAIL L1 → `implement` ｜ FAIL L2 → `plan` ｜ FAIL L3 → `spec` ｜ BLOCKED → `awaiting_human`
-8. Budget exhausted → `escalated_to_human`
-
-### Active Workstream Detection
-
-Check `tracked-work.json` on every message:
-
-| Condition | Route |
-|-----------|-------|
-| Active workstream + development intent | `using-agents-stack` |
-| Active workstream + domain skill intent | Domain skill directly |
-| No active + pipeline keyword | `using-agents-stack` |
-| No active + ad-hoc development | Direct execution |
+| When | Gate |
+|------|------|
+| Phase produces FAIL verdict | `status.json.blocking_gate` set — do not advance |
+| Any checkpoint FAIL | Route back to the failed layer (L1→implement, L2→plan, L3→spec) |
 
 ## Dispatch Essentials
 
 - Provide worker with: child SKILL.md path, workstream ID, artifact paths
 - **Generator ≠ Auditor**: All three checkpoint phases (verify-architecture, analyze, qa) must use different worker instances from the phases they verify. The agent that designs must not verify. Verify before dispatching.
 - Context reuse: generator phases (spec→plan→tasks→implement) may reuse; verify-architecture, analyze, and qa always separate workers; release may reuse (post-verification)
-- Detailed iteration routing (L1/L2/L3 + routing table) → see `references/pipeline.md`
-- Detailed state machine → see `references/state-machine.md`
 
-## Router Output
+## Routing Output Examples
 
-- `Route to goal.` · `Route to spec.` · `Route to plan.` · `Route to verify-architecture.` · `Route to tasks.` · `Route to analyze.`
-- `Route to implement.` · `Route to qa.` · `Route to release.`
+- `Route to goal. Current phase: goal.`
+- `Route to analyze. Current phase: analyze.`
+- `Phase analyze complete. Advancing to implement.`
+- `Blocked. Phase analyze returned FAIL. See report.md. Route back to plan.`
+- `State machine is OFF. Executing ad-hoc.`
 - `Awaiting human input.` · `Escalated to human.`
