@@ -12,13 +12,21 @@
   "blocking_gate": null,
 
   "phase_gates": {
+    "goal": {
+      "approved": null
+    },
     "spec": {
       "approved": null
     },
     "plan": {
-      "approved": null
+      "approved": null,
+      "architecture_trace_complete": null
+    },
+    "verify_architecture": {
+      "passed": null
     },
     "tasks": {
+      "entry_ok": null,
       "consistency_check_passed": null
     },
     "implement": {

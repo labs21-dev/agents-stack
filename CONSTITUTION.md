@@ -9,19 +9,22 @@
 3. **實作者 ≠ 驗收者** — implement 和 qa 必須分派給不同的 worker instance
 4. **Cold start 必須可用** — 全新 agent 從檔案即可恢復完整狀態，不需對話歷史
 5. **迭代 ≠ 重試** — retry 修正執行，iteration 質疑前提。重試不改變 contract；iteration 回到 spec/plan
+6. **驗證節奏 — 每 2 步一個關卡** — 任何重要的決定，在下一個決定做出之前，必須被驗證。關卡 #1: Architecture vs Goal（plan→tasks）、關卡 #2: SPEC×PLAN×TASKS 一致性（tasks→implement）、關卡 #3: CODE vs REALITY（implement→release）。跳過關卡 = 錯誤鎖定在新的基礎上，回溯成本從 1x 變成 5-8x。
 
 ## 檔案優先級
 
 `.agents-stack/<id>/` 內檔案發生衝突時，依以下優先級判定：
 
-qa-report.md > handoff.md > tasks.md > plan.md > spec.md > status.json > .agents-stack/tracked-work.json
+qa-report.md > handoff.md > tasks.md > plan.md > spec.md > goal.md > status.json > .agents-stack/tracked-work.json
 
 ## 檔案組織
 
 .agents-stack/
 ├── <workstream-id>/     # 進行中的工作流 artifacts
+│   ├── goal.md          # GOAL phase 產出
 │   ├── spec.md          # SPEC phase 產出
 │   ├── plan.md          # PLAN phase 產出
+│   ├── arch-report.md   # Checkpoint #1: Architecture vs Goal 驗證報告
 │   ├── tasks.md         # TASKS phase 產出
 │   ├── handoff.md       # IMPLEMENT phase 產出
 │   ├── qa-report.md     # QA phase 產出
@@ -38,6 +41,8 @@ qa-report.md > handoff.md > tasks.md > plan.md > spec.md > status.json > .agents
 
 ## 工作流規則
 
+- **Architecture Trace 規則** — plan phase 必須產出 Architecture Trace 表格，每一個架構決策必須對應到至少一個 goal 成功指標（SC）或 spec 需求（AC）。無法對應的架構決策是過度工程，必須移除或提出具體證據。
+- goal phase 必須產出 goal.md：Problem、Success Criteria、Non-Goals、Constraints。不得提及技術、檔案、或架構 — 那是 plan 的職責。
 - spec phase 必須產出 BDD 格式的 Acceptance Criteria（Given-When-Then）
 - tasks phase 的每個 task 必須包含 5 維驗收元資料（Align Spec, Coverage, Deliverables, Checkpoints, DoD）
 - implement phase 必須按照 tasks.md 順序執行 RED-GREEN-REFACTOR 循環，每個 task 通過才能進入下一個
@@ -60,6 +65,8 @@ qa-report.md 中的 FAIL 必須 trace 到 root cause layer：
 | L1 | 程式碼實作 | 實作錯誤、edge case 漏掉 | implement（該 task 標記 [↩]）|
 | L2 | 架構設計 | API/DB 設計不足 | plan（更新 plan.md → 重拆 tasks）|
 | L3 | 需求規格 | Edge case 未定義、AC 遺漏 | spec（更新 spec.md → 重 plan）|
+
+Checkpoint #1 catches L2 issues before tasks. Checkpoint #2 catches L2/L3 issues before implement. Checkpoint #3 catches L1/L2/L3 issues before release. Earlier detection = lower backtrack cost.
 
 ## 預算限制
 

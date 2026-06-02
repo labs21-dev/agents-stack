@@ -4,6 +4,7 @@ description: Define what we build: goal, user stories, edge cases, BDD acceptanc
 trigger: When no spec.md exists for the active workstream.
 inputs:
   - CONSTITUTION.md
+  - goal.md
   - .agents-stack/tracked-work.json
   - relevant reference docs
 outputs:
@@ -93,11 +94,12 @@ failure-path AC is incomplete.
 ## Workflow
 
 1. Read `CONSTITUTION.md` for governing rules and constraints
-2. Read `.agents-stack/tracked-work.json` for the active workstream ID
-3. Form spec from human intent — what is the core problem and solution?
-4. Identify edge cases explicitly: stress every boundary, empty state, error path, concurrency scenario
-5. Write `spec.md` to `.agents-stack/workstream/<ws-id>_{YYYYMMDD}/spec.md`
-6. Update `status.json`: set `phase: "spec"`
+2. Read `goal.md` — understand the problem, success criteria, non-goals, and constraints
+3. Read `.agents-stack/tracked-work.json` for the active workstream ID
+4. Form spec from goal — derive user stories, edge cases, and ACs that serve the goal's success criteria
+5. Identify edge cases explicitly: stress every boundary, empty state, error path, concurrency scenario
+6. Write `spec.md` to `.agents-stack/workstream/<ws-id>_{YYYYMMDD}/spec.md`
+7. Update `status.json`: set `phase: "spec"`
 
 ## Quality Bar
 

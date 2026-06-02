@@ -27,11 +27,13 @@ When files disagree, higher-precedence artifact wins:
 | Phase | Evidence | Next Step |
 |-------|----------|-----------|
 | uninitialized | Missing or empty tracked-work.json | Create first workstream |
+| goal | goal.md exists | Route to spec |
 | spec | spec.md exists | Route to plan |
-| plan | plan.md exists | Route to tasks |
-| tasks | tasks.md exists | Route to analyze (consistency gate) |
-| analyze | Consistency gate passed | Route to implement |
-| implement | handoff.md exists | Route to qa |
+| plan | plan.md exists + architecture trace complete | Route to tasks |
+| verify-architecture | arch-report.md exists with PASS verdict | Route to tasks |
+| tasks | tasks.md exists | Route to analyze (Checkpoint #2: consistency gate) |
+| analyze | Checkpoint #2 passed | Route to implement |
+| implement | handoff.md exists | Route to qa (Checkpoint #3: adversarial verification) |
 | qa | qa-report.md exists | Evaluate verdict |
 | release | changelog.md exists + archived | Complete |
 | awaiting_human | status.json blocked_reason set | Human decision |
@@ -43,6 +45,7 @@ When files disagree, higher-precedence artifact wins:
 ### Contextual Trigger (overrides artifact check at any point)
 
 Before artifact-driven routing, detect user natural language intent:
+- "goal/define direction" → route goal (create workstream if needed)
 - "spec/think through" → route spec (create workstream if needed)
 - "architecture/plan" → route plan
 - "tasks/breakdown" → route tasks
@@ -57,13 +60,20 @@ Before artifact-driven routing, detect user natural language intent:
 
 ### Forward Pipeline
 
-- No spec.md → route spec
-  - spec worker reads CONSTITUTION.md, tracked-work.json, forms spec
+- No goal.md → route goal
+  - goal worker reads CONSTITUTION.md, tracked-work.json, defines goal.md (problem, success criteria, non-goals, constraints)
+- goal.md exists, no spec.md → route spec
+  - spec worker reads goal.md + CONSTITUTION.md, derives user stories and ACs from goal, writes spec.md
 - spec.md exists, no plan.md → route plan
-  - plan worker reads spec, designs architecture, writes plan.md
-- plan.md exists, no tasks.md → route tasks
+  - plan worker reads goal.md + spec.md, designs architecture with Architecture Trace, writes plan.md
+- plan.md exists, no tasks.md → route verify-architecture (Checkpoint #1)
+  - verify-architecture worker reads spec.md + plan.md, produces arch-report.md
+  - validates Architecture Trace completeness + goal mapping + over-engineering signals
+  - PASS → set `phase_gates.tasks.entry_ok = true`, route tasks
+  - FAIL → route back to plan (fix architecture before task breakdown)
+- `phase_gates.tasks.entry_ok = true`, no tasks.md → route tasks
   - tasks worker reads spec+plan, breaks into tasks with 5D verification, writes tasks.md
-- tasks.md exists, no handoff.md → route analyze (consistency gate)
+- tasks.md exists, no handoff.md → route analyze (Checkpoint #2: spec×plan×tasks consistency gate)
   - orchestrator checks spec+plan+tasks consistency before dispatching implement
   - gate passes → set `phase_gates.implement.entry_ok = true`, route implement
   - minor gaps → route tasks with fix suggestions

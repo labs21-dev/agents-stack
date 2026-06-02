@@ -2,6 +2,13 @@
   "router_name": "using-agents-stack",
   "children": [
     {
+      "name": "goal",
+      "target": "using-agents-stack/goal",
+      "summary": "Define the goal: problem, success criteria, non-goals, constraints. Directional anchor for architecture and specs.",
+      "route_when": ["No goal.md exists for the active workstream"],
+      "avoid_when": ["goal.md already exists and needs spec"]
+    },
+    {
       "name": "spec",
       "target": "using-agents-stack/spec",
       "summary": "Define what: goal, user stories, edge cases, BDD acceptance criteria.",
@@ -16,10 +23,17 @@
       "avoid_when": ["plan.md already exists and needs task breakdown"]
     },
     {
+      "name": "verify-architecture",
+      "target": "using-agents-stack/verify-architecture",
+      "summary": "Checkpoint #1 — Architecture vs Goal. Validates every architecture decision serves a spec requirement.",
+      "route_when": ["plan.md exists without tasks.md AND architecture trace not verified"],
+      "avoid_when": null
+    },
+    {
       "name": "tasks",
       "target": "using-agents-stack/tasks",
       "summary": "Break plan into minimal verifiable tasks with 5-dimension verification metadata.",
-      "route_when": ["plan.md exists without tasks.md"],
+      "route_when": ["plan.md exists without tasks.md AND architecture trace validated"],
       "avoid_when": ["tasks.md already exists and needs implementation"]
     },
     {

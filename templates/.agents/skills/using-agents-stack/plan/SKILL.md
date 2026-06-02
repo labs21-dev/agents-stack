@@ -36,7 +36,17 @@ Design the architecture that satisfies the spec. You produce the blueprint that 
 ### Technology Choices
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| [e.g., State management] | [Choice] | [Why this fits] |
+
+### Architecture Trace
+
+Every architecture decision must justify its existence by tracing to the spec. Architecture without a goal is over-engineering.
+
+| Architecture Decision | Serves (GOAL / SPEC § / AC) | Justification |
+|-----------------------|----------------------------|---------------|
+| [e.g., Repository pattern] | AC-003 / US-001 | Isolates DB queries for testability |
+| [e.g., Event bus] | SC-02 / AC-005 | Async notification delivery requirement serves real-time success criterion |
+
+**⛔ Gate:** Every architecture decision in this plan must have a row. Each must trace to at least one goal success criterion (SC-XX) or spec AC. If a decision cannot be traced to a goal or spec requirement, it does not belong in this plan — it is over-engineering.
 
 ## API Design
 
@@ -182,6 +192,7 @@ Map every acceptance criterion to a concrete test approach.
 ## Quality Bar
 
 - Impact analysis names real files from the codebase, not guessed paths
+- Architecture Trace table is complete — every architecture decision maps to at least one goal success criterion or spec requirement (SC, AC, or spec section)
 - Test strategy maps 1:1 to acceptance criteria from spec
 - Risks include mitigation, not just identification
 - Architecture is actionable — a developer can begin building from this document

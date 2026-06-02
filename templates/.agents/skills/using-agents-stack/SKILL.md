@@ -25,6 +25,8 @@ Workers run phases; you route, merge, and serve as the human-facing boundary.
 
 ## Pipeline Trigger
 
+`goal → spec → plan → [CHECK #1: Arch vs Goal] → tasks → [CHECK #2: ANALYZE] → implement → [CHECK #3: QA] → release`
+
 This orchestrator activates when:
 - The user explicitly invokes a pipeline phase: spec, plan, tasks, implement, qa, release
 - Active `.agents-stack/workstream/<ws-id>_{YYYYMMDD}/` artifacts exist + development intent
@@ -38,6 +40,7 @@ Ad-hoc development (one-off bugfix, questions, exploration) → do NOT route thr
 
 | Checkpoint | Gate |
 |------------|------|
+| Before entering tasks | `phase_gates.tasks.entry_ok` = true |
 | Before entering implement | `phase_gates.implement.entry_ok` = true |
 | Between implement tasks | `phase_gates.implement.current_task_verified` = true |
 | Before writing handoff | All tasks `[✅] done` |
@@ -52,8 +55,9 @@ Ad-hoc development (one-off bugfix, questions, exploration) → do NOT route thr
 2. Check `blocking_gate`: blocked → fix or escalate; unfixable → `awaiting_human`, STOP
 3. No active workstream → prompt user to create one (spec entry point)
 4. Intent detection → see AGENTS.md Contextual Skill Resolver
+4a. Before routing to tasks: check `phase_gates.tasks.entry_ok`. If false → dispatch verify-architecture worker. Worker validates plan.md Architecture Trace against spec.md, scans for over-engineering signals. If PASS → set `phase_gates.tasks.entry_ok = true`. If FAIL → route to plan for revision.
 5. Route by artifact existence:
-   - Missing `spec.md` → `spec` ｜ Missing `plan.md` → `plan`
+   - Missing `goal.md` → `goal` ｜ Missing `spec.md` → `spec` ｜ Missing `plan.md` → `plan`
    - Missing `tasks.md` → `tasks` ｜ Missing `report.md` → `analyze`
    - Missing `handoff.md` → `implement` (analyze must be passed)
    - Missing `qa-report.md` → `qa` ｜ QA_PASS → `release`
@@ -75,13 +79,13 @@ Check `tracked-work.json` on every message:
 ## Dispatch Essentials
 
 - Provide worker with: child SKILL.md path, workstream ID, artifact paths
-- **Generator ≠ Auditor**: implement and qa must use different worker instances. Verify before dispatching.
-- Context reuse: generator phases (spec→plan→tasks→implement) may reuse; qa always a separate worker; release may reuse (post-verification)
+- **Generator ≠ Auditor**: All three checkpoint phases (verify-architecture, analyze, qa) must use different worker instances from the phases they verify. The agent that designs must not verify. Verify before dispatching.
+- Context reuse: generator phases (spec→plan→tasks→implement) may reuse; verify-architecture, analyze, and qa always separate workers; release may reuse (post-verification)
 - Detailed iteration routing (L1/L2/L3 + routing table) → see `references/pipeline.md`
 - Detailed state machine → see `references/state-machine.md`
 
 ## Router Output
 
-- `Route to spec.` · `Route to plan.` · `Route to tasks.` · `Route to analyze.`
+- `Route to goal.` · `Route to spec.` · `Route to plan.` · `Route to verify-architecture.` · `Route to tasks.` · `Route to analyze.`
 - `Route to implement.` · `Route to qa.` · `Route to release.`
 - `Awaiting human input.` · `Escalated to human.`

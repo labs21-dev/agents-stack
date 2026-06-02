@@ -31,6 +31,8 @@ This QA worker MUST be a **fresh session** with no prior context from implement 
 
 If you are reading this and you have prior session context on this workstream, STOP and report to orchestrator: "I am biased by accumulated context — dispatch a fresh qa agent."
 
+This principle applies to ALL three checkpoints: **verify-architecture (Checkpoint #1)** must be a separate agent from plan. **analyze (Checkpoint #2)** must be a separate agent from spec/plan/tasks. **qa (Checkpoint #3)** must be a separate agent from implement. Generator ≠ Auditor is a pipeline-wide invariant.
+
 ## QA Focus
 
 QA verifies against SPEC acceptance criteria and finds adversarial edge cases. It does NOT re-run implement's self-checks (wiring integrity, combinatorial risk, hardcoded status scan — implement already validated these). QA's job: exercise the live system against every AC, find what implement missed.
