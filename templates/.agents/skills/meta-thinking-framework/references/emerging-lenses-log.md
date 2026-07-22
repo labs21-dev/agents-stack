@@ -24,4 +24,11 @@
 
 ## 記錄
 
-（尚無記錄。每次引入額外鏡頭時在此追加。）
+## [2026-07-22] 機制一致性（mechanism coherence）— 用於 system prompt 設計
+- 問題類型：系統/agent 架構設計
+- 觸發變數：「prompt 與運行機制的一致性」——prompt 教的做法若與 runner 實際行為不符，造成 self-reinforcing loop
+- 反事實對比：硬套底層邏輯鏡頭會把 prompt 當封閉狀態機、漏掉 prompt 教的動作與外部 runner 的介面契約（runner 行為不在 prompt 詞彙內）；硬套逆向只列「prompt 可能錯」，看不到「prompt 與機制互相強化錯誤」的死循環結構。此為教訓筆記 §2.1（`<USER_TOOLS>` 教裸 bun → frontmatter 死循環）root cause，六鏡原框架會漏
+- 觀察推論摘要：prompt 是與引擎機制共同構成的契約，非獨立文件；每一條「教的做法」必須對 runner 實測，不一致時改 prompt 或改 runner 但不可兩邊各自看起來對。prompt 設計第一道驗證 = 教法 vs runner 實際行為逐條對齊，這是傳統 prompt engineering 沒有的維度
+- 事後驗證：待驗（同類問題累積中）
+- 累計使用次數：1
+- 是否達畢業門檻：否（需同類 ≥3 次且驗證有效）。候選觀察：疊加利害關係人矩陣時，「引擎機制」可作為非人 stakeholder，其「抵抗」= 機制漂移——此疊加效應支持鏡頭獨立性
