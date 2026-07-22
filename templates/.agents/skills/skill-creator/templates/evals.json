@@ -1,0 +1,25 @@
+{
+  "skill_name": "<kebab-case-slug>",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Realistic, concrete user prompt with detail (paths, context, names). Edge-case-leaning, not clear-cut.",
+      "expected_output": "Human-readable description of the expected result.",
+      "files": [],
+      "expectations": [
+        "The output includes X",
+        "The skill used approach Y",
+        "The output does NOT do Z"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Another realistic prompt, different length/style than id 1.",
+      "expected_output": "...",
+      "files": [],
+      "expectations": [
+        "..."
+      ]
+    }
+  ]
+}
