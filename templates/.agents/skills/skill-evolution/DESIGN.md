@@ -32,7 +32,7 @@
 - L3 立法權**人類獨佔**（AI 只 accumulate、只 flag、只 draft patch）。
 - 案例須**被動收集 + 事後驗證**，非 AI 自評（防偽案例灌水）。
 - 升格 patch **AI draft、人類 gate**（AI 不自改作業系統）。
-- L3 種子標準**借外部既有框架**（CCA laws / extract-methodology common-law），不自生——度冷啟動。
+- L3 種子標準**不自生**——冷啟動錨點為已運作的 `emerging-lenses-log` 經驗（門檻、畢業 gate 已在 meta-thinking-framework 上實跑）+ 跨 case 自收斂，不發明新標準。
 
 ## 3. 雙軌形狀
 
@@ -106,7 +106,7 @@ REJECTED
       CASE.md         ← 跨 skill 收斂的單一議題記錄（如「反身性鏡頭是否該畢業」）
       input.txt       ← 證據（territory beside map）
   ```
-- **寫入界線**（沿用 extract-methodology）：
+- **寫入界線**（common-law loop 的 accumulate/legislate 分離）：
   - INDEX cases-list：AI auto-append（additive、reversible）。
   - INDEX recurring-patterns / legislation-log：**人類 only**（這是 N≥3 收斂決策點；AI auto-fill = AI 立法 = 違反反身性防禦）。
   - CASE.md：AI 寫一次後 frozen（additive only）。
@@ -121,7 +121,7 @@ REJECTED
 ## 9. 與既有 skill 的關係
 
 - **官方 skill-creator**：L0/L1 借用它，不修改。本 skill 是其進化層補充。
-- **extract-methodology**：本 skill 的 L3 accumulate-only 機制直接沿用其 common-law loop 與 compound/ 結構。兩者同源（反身性防禦），不重複造。
+- **已刪的 extract-methodology**：本 skill 的 L3 accumulate-only 機制血緣上源自一個更早的 extract-methodology skill（已刪——無 live consumer、N=1 未校準、其唯一有價值的 common-law loop 已被本 skill 吸收）。血緣註記於 `l3-accumulate.md`，無運行期依賴。
 - **meta-thinking-framework**：第一個掛載 evolution scaffold 的示範 skill（其 `emerging-lenses-log.md` 已是 evolution-log 的運作雛形）。
 
 ## 10. 實作階段劃分（批准後）
@@ -135,11 +135,11 @@ REJECTED
 
 1. **被動案例收集不造成顯著負擔** → 在 meta-thinking-framework 上跑 5 次真實分析，量測每次多耗 token/步驟。超過 skill 本身價值的 10% 則需減重。
 2. **頻率+驗證雙門檻擋偽案例** → 回查 emerging-lenses-log 首兩筆（機制一致性、反身性），看「事後驗證」欄能否被客觀填寫，還是退化成自評。退化 → 需外部驗證來源。
-3. **L3 借外部種子（CCA laws）能度冷啟動** → 拿 meta-thinking-framework v2 回推其 L3 標準，看能否從 CCA laws 推出，還是得現場歸納。後者 → 種子需換。
+3. **L3 冷啟動錨點（emerging-lenses-log 經驗）足以度冷啟動** → 拿 meta-thinking-framework v2 回推其 L3 標準，看能否從已運作的 emerging-lenses-log 經驗推出，還是得另覓外部 anchor。後者 → 種子需換。
 4. **N=3 / M=3 門檻合宜** → Phase 3 累積後量測：過鬆（誤升）或過緊（該升未升）則調。
 
 ## 12. 反身性自檢（本設計對自己）
 
 本設計本身是 meta-skill，受反身性威脅。自檢：
-- 本設計的「好進化機制標準」是否自生？→ 否：L3 種子借 CCA / extract-methodology，門檻值借 emerging-lenses-log 已運作經驗，非憑空。
+- 本設計的「好進化機制標準」是否自生？→ 否：L3 種子借已運作的 emerging-lenses-log 經驗 + 跨 case 自收斂，門檻值借其已實跑經驗，非憑空發明。
 - 本設計是否用自己標準評自己？→ 部分：Phase 3 驗證即外部 anchor（真實使用事後驗證）。但本設計未經 N≥3 跨 skill 收斂，**目前是 N=1 設計**——誠實標記，需 Phase 3-4 累積才算定案。

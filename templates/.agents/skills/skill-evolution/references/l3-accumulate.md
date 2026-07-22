@@ -63,7 +63,7 @@ skill-evolution/
 <if a pattern recurs across cases, name it here so the human can find it at convergence time>
 ```
 
-(This template is shared with `extract-methodology` — the two skills are the same lineage. If extract-methodology is present, reuse its `compound/` rather than duplicating.)
+(This CASE.md template and the common-law loop it implies were originally derived from an earlier `extract-methodology` skill, since removed. The lineage is noted here so the origin of the accumulate/legislate boundary is traceable; no external skill is referenced at runtime.)
 
 ## What the AI does at L3
 

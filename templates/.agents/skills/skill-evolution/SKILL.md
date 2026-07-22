@@ -17,7 +17,7 @@ This skill is a meta-skill operating on skills. A meta-skill that grades its own
 - **L3 legislation is human-only.** This skill accumulates cases and flags candidate patterns; it never folds a pattern into a standard itself.
 - **Cases are passive + post-hoc verified, not self-rated.** The agent doesn't declare its own use "effective"; effectiveness is judged by an external outcome.
 - **Patches are AI-drafted, human-gated.** The AI proposes a concrete diff; the human approves, rejects, or amends before it's applied.
-- **L3 seed standards are borrowed, not self-generated.** External frameworks (e.g. CCA, extract-methodology's common-law loop) are the cold-start anchor.
+- **L3 seed standards are borrowed, not self-generated.** The cold-start anchor is the accumulated `emerging-lenses-log` experience (thresholds, graduation gates already exercised on meta-thinking-framework) plus cross-case self-convergence. L3 does not invent its own "good skill" criterion — that would re-open the reflexivity failure. Standards are refined by cross-case accumulation, not declared up front.
 
 ## The evolution state machine
 
