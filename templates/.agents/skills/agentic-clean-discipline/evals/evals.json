@@ -1,0 +1,128 @@
+{
+  "skill_name": "agentic-clean-discipline",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our AI agent wrote a user-profile CRUD endpoint. Standard POST/GET/PATCH, Postgres, nothing fancy. Team wants me to 'just ship it, tests are green'. Should I run the full discipline here or just let it through?",
+      "expected_output": "Grade L1 or low-L2. Open minimal gates (smoke + human skim critical path). Do NOT open mutation testing / full metrics — that is over-gating an exploration/routine task. Still runs reverse-gate screen (all pass) and spec self-check.",
+      "files": [],
+      "expectations": [
+        "Assigns a low grade (L1 or low L2) appropriate to routine reversible CRUD",
+        "Does NOT open full mutation testing or full metric gates for this grade",
+        "Still runs the reverse-gate screens before opening any gate",
+        "Does not STOP (the task is gate-catchable and reversible)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "It's just a small change to our billing endpoint — adding a discount_code field to the charge request. But the endpoint already handles idempotency keys and retries from the payment gateway. AI says it's a one-liner, tests pass, ship it.",
+      "expected_output": "Detects the L3 corner (touches payment/irreversible path with existing idempotency/retry protocol). Runs the WHOLE task at L3 per cross-bucket rule — does NOT average down to L2 just because the diff is one line. Delegates spec gate to protocol-adversarial-design due to idempotency/retry character. Requires L3 human line-read of the core path.",
+      "files": [],
+      "expectations": [
+        "Identifies the L3 corner (payment + idempotency + retry = irreversible / protocol character)",
+        "Does NOT grade down to L2 because the diff is small (no averaging the cross-bucket corner down)",
+        "Runs the entire task at L3 including human line-read of core paths",
+        "Delegates the spec gate to protocol-adversarial-design due to idempotency/retry",
+        "Rejects 'ship it, tests green' as sufficient for this grade"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I'm not even sure this module is modeled at the right abstraction level. The AI's code passes all tests and metrics look clean, but something feels off about whether we split this into a service or kept it inline. Can you verify the quality?",
+      "expected_output": "STOP at reverse-gate Screen 1 — the quality hinges on abstract-level choice, which gates cannot catch. Category disclosure applies. Falls back to human reading. Does NOT pretend gates can judge the abstraction.",
+      "files": [],
+      "expectations": [
+        "Outputs STOP at the reverse gate (Screen 1: defect class not gate-catchable)",
+        "Names abstract-level choice / architecture smell as structurally uncatchable by gating",
+        "Recommends human reading, does not run the verify/metric gates",
+        "Does NOT claim 'metrics clean + tests pass = quality verified'"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "The AI agent that generated the code also ran the tests and reported 100% coverage, complexity 3, all passing. It says we're good to ship. This is an L2 internal admin feature.",
+      "expected_output": "Flags the self-declared gate pass as anti-pattern #8 — the verifier was the generator. Requires re-running verify/metric gates from a distinct agent or refutation-instructed stage. Does NOT accept the AI's self-reported gate results.",
+      "files": [
+        "evals/files/admin-feature-diff.txt"
+      ],
+      "expectations": [
+        "Identifies that the generator also ran the verify (self-grading anti-pattern)",
+        "Does NOT accept self-reported coverage/complexity/passed as the gate result",
+        "Requires the verifier to be a distinct agent or refutation-instructed stage",
+        "References role-pipeline / anti-pattern #8"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Ran the verify gate at L2. Mutation testing killed 9 of 10 mutants on a routine feature — that's way more edge cases than an L2 should surface. But the grade's already set, so let's just keep the L2 result and move on.",
+      "expected_output": "Triggers feedback-upgrade: mutation failure density far above the grade's prediction falsifies the L2 grade. Re-grades (up, toward L3) and re-runs denser gates. Does NOT keep the L2 result just because the grade was fixed at step 0.",
+      "files": [],
+      "expectations": [
+        "Triggers feedback-upgrade based on high mutation failure density vs grade prediction",
+        "Re-grades upward (toward L3) rather than holding L2",
+        "Does NOT keep the prior L2 gate result as 'already passed'",
+        "States that downstream evidence reopens the step-0 grade"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "AI refactored a 200-line function into ten 20-line functions. Cyclomatic complexity dropped from 12 to 4. Coverage still 100%. Looks much cleaner now — can we pass the metric gate?",
+      "expected_output": "Does NOT pass on the single complexity metric. Requires mutation-score cross-check: if complexity dropped but mutation score also dropped, the split was cosmetic, not real simplification. Combines metrics, does not pass on complexity alone.",
+      "files": [],
+      "expectations": [
+        "Does NOT pass the gate on cyclomatic complexity alone",
+        "Requires the mutation-score cross-check for the refactor",
+        "Flags the split-to-game pattern (ten trivial functions vs one coherent one)",
+        "Reads metrics in combination, not per-metric pass lines"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Write me the acceptance criteria for our new onboarding flow — make it feel welcoming and natural for first-time users.",
+      "expected_output": "STOP at reverse-gate Screen 2 — spec is irreducibly fuzzy ('feel welcoming/natural') with non-trivial effort. Reading code / ordinary UX acceptance is cheaper than a cage that won't hold. Does NOT force hard invariants on a tone/feel task.",
+      "files": [],
+      "expectations": [
+        "Outputs STOP at Screen 2 (spec not hardenable at reasonable cost)",
+        "Does NOT manufacture hard invariants for a 'feel/tone' requirement",
+        "Suggests ordinary UX acceptance / human reading as the cheaper alternative",
+        "Does not delegate to protocol-adversarial-design (no protocol character)"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "I need to understand what this legacy auth middleware does before we touch it. Can you run the quality gates on it to tell me if it's any good?",
+      "expected_output": "STOP at reverse-gate Screen 3 — the task is comprehending existing code, not generating new code. Gates do not produce comprehension. Recommends reading the code instead. Does NOT run the generate→verify pipeline on existing code.",
+      "files": [],
+      "expectations": [
+        "Outputs STOP at Screen 3 (task is comprehension, not generation)",
+        "Does NOT run the generation/verify/metric pipeline on existing code",
+        "Recommends reading the code as the correct action",
+        "Recognizes gates do not produce comprehension"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "We shipped the AI-generated feature two weeks ago and it's causing intermittent data loss in production. Where did the discipline fail — and what do we fix?",
+      "expected_output": "Runs the self-loop: locates which gate leaked (spec weak? verify didn't cover? metric gamed? grade mis-called? self-grading?) rather than re-running the whole pipeline. Fixes only that gate's output. This is the post-incident diagnostic, not a pre-ship run.",
+      "files": [],
+      "expectations": [
+        "Treats this as a self-loop diagnostic, not a fresh pipeline run",
+        "Locates the specific leaking gate rather than re-running everything",
+        "Considers grade mis-call / self-grading / spec-weakness / metric-gaming as candidate leaks",
+        "Does NOT respond by re-grading and re-running all gates from scratch"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "This is an irreversible data migration — once it runs we can't roll back, and a bug corrupts production data permanently. The AI agent can generate it fast. Let's just do L2 gates since it's a one-time script.",
+      "expected_output": "Grades L3 (irreversible + high failure cost). Does NOT allow L2 gates on an irreversible task. Reverse-gate Screen 4 would STOP if only sampled gates were proposed — so upgrades to L3 with full mutation + human line-read. Single-use does not lower the grade.",
+      "files": [],
+      "expectations": [
+        "Grades L3 due to irreversibility + permanent data corruption risk",
+        "Does NOT downgrade to L2 because it is a one-time script",
+        "Requires full mutation testing + line-level human read for this grade",
+        "Screen 4 logic applies: irreversible harm + only sampled gates = STOP or upgrade"
+      ]
+    }
+  ]
+}
