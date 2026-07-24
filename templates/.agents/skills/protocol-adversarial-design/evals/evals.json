@@ -1,0 +1,133 @@
+{
+  "skill_name": "protocol-adversarial-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We're designing ARC-style session handoff: when context pressure hits, seal the old session, write a handoff doc, open a new session. Engineers worry a late tool_result might still append to the sealed session. Help me specify this properly.",
+      "expected_output": "Gate PASS, hard invariant about sealed⇒no append, thin model with seal/append movers, explore notes, align tests. Not a full agent model.",
+      "files": [],
+      "expectations": [
+        "Applies Protocol Adversarial Design gate and reports pass/fail per screen",
+        "States a hard invariant that sealed/old session cannot accept later appends",
+        "Keeps the model thin (handoff/lifecycle slice, not whole ReAct/prompt stack)",
+        "Includes alignment tests and explicit model boundaries",
+        "Does NOT treat the problem as prompt or skill-markdown design"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Can you write acceptance criteria for our settings page redesign? We want it to feel cleaner and load faster on mobile.",
+      "expected_output": "STOP — failed screens (no protocol interleaving / not correctness-expensive in the PAD sense). Point to ordinary UX/QA.",
+      "files": [],
+      "expectations": [
+        "Outputs STOP with failed screen(s)",
+        "Does NOT produce a TLA+ spec or state machine for the settings UI",
+        "Suggests a cheaper alternative (UX acceptance, performance tests, etc.)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Payment webhook can retry. Sometimes we see double charges for the same idempotency key. Don't need a full course — just how to pin the rule.",
+      "expected_output": "Gate PASS, invariant ∀ key charge≤1, thin actions submit/charge/retry/webhook, explore dual-delivery, align tests.",
+      "files": [],
+      "expectations": [
+        "Hard invariant on idempotency / at-most-one successful charge",
+        "Models retry/webhook as movers",
+        "Does NOT model the entire ledger or UI checkout flow",
+        "Mentions exploration (table or checker) and alignment tests"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "We have path jail and root jail and also a workspace root. Nobody agrees which one wins. Should we TLA+ all three mechanisms?",
+      "expected_output": "Reframe to single source of truth (workspace); jails derived; thin decide model; warn against dual truth / modeling all mechanisms as peers.",
+      "files": [],
+      "expectations": [
+        "Rejects modeling path jail and root jail as peer source truths",
+        "Centers an invariant on workspace / resolved path / decision",
+        "May offer optional TLA+ only after thin contract exists",
+        "Cites dual-truth anti-pattern or equivalent warning"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Please TLA+ our entire coding agent: tools, prompts, skills, memory, sub-agents, the works.",
+      "expected_output": "STOP or forced shrink — whole-system modeling anti-pattern; ask for one dangerous protocol slice.",
+      "files": [],
+      "expectations": [
+        "Refuses whole-agent modeling as first shot",
+        "Asks to pick a thin high-risk slice or STOPs on screen 3",
+        "Does NOT produce a mega-spec covering prompts and skills"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "User can hit Reject on an approval dialog while bash is still running. Can the tool output still land in conversation.jsonl after reject?",
+      "expected_output": "Gate PASS on approval vs in-flight write; hard invariant; thin model; explore reject∥finish interleaving.",
+      "files": [],
+      "expectations": [
+        "Treats reject and tool completion as independent movers",
+        "Hard invariant forbids post-reject result append for that call",
+        "Includes an interleaving/explore step",
+        "Does NOT reduce the answer to UI copy for the dialog"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Should we enter the European market this year? Need a deep strategic analysis.",
+      "expected_output": "Does not run PAD modeling; deflect to meta-thinking / strategy — wrong skill.",
+      "files": [],
+      "expectations": [
+        "Does NOT produce protocol invariants or TLA+",
+        "Points away from this method (e.g. meta-thinking or ordinary strategy analysis)",
+        "STOP or explicit out-of-scope"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Write a user story: As a developer I want CRUD for feature flags so that I can toggle features.",
+      "expected_output": "STOP — not PAD; ordinary story/acceptance/tests.",
+      "files": [],
+      "expectations": [
+        "STOP or clear refusal to apply protocol adversarial design",
+        "Does NOT invent a distributed consensus model for simple CRUD",
+        "Suggests normal user-story / test approach"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Offline mobile sync: local edit, push, pull, conflict. We need a hard rule for what 'acked' means before I implement the merge UI.",
+      "expected_output": "Gate PASS, hard ack/version invariant, thin sync actions, defer UI; align tests.",
+      "files": [],
+      "expectations": [
+        "Focuses on sync protocol state not merge UI pixels",
+        "Produces a hard invariant involving ack/version or equivalent",
+        "Keeps model thin; lists UI as out of scope"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "TLC said OK on our lock spec but prod still deadlocked. So formal methods are useless right?",
+      "expected_output": "Explain explore≠prove / model gap; help find missing mover or assumption; do not abandon method wholesale or claim TLC certifies prod.",
+      "files": [],
+      "expectations": [
+        "States that model-green does not equal production-safe",
+        "Looks for missing assumptions/movers (model gap) rather than only blaming TLC",
+        "Does NOT claim formal methods are useless or always sufficient"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Payment webhook can retry; we sometimes double-charge the same idempotency key. Pin the hard rule, then give me a runnable check of the thin model — not only a hand table, and do not require TLA+/TLC. Any practical runner is fine.",
+      "expected_output": "Gate PASS, hard at-most-one charge invariant, thin model, Mode B executable bounded explore (language not prescribed), boundaries; no forced .tla.",
+      "files": [],
+      "expectations": [
+        "Applies gate and states a hard idempotency / at-most-one charge invariant",
+        "Uses executable bounded exploration (script, small program, or harness) — not hand-table-only",
+        "Does NOT require TLA+/TLC or prescribe a single language as mandatory",
+        "States explore≠prove / Boundaries (model-green is not production-safe)",
+        "Does NOT skip Gate or model the entire payment product/UI"
+      ]
+    }
+  ]
+}
