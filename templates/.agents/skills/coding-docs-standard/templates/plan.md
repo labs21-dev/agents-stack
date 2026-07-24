@@ -13,19 +13,25 @@ last-updated: {YYYY-MM-DD}
 <!-- One sentence. The "what" is often in code; the "why now / why this shape" usually isn't. -->
 
 ## Tried (so it isn't retried)
-- {approach} → {outcome}  <!-- especially the failures — code won't show what was attempted -->
+<!-- REQUIRED. The unscannable part: code shows the current state, not what was
+     attempted and failed. Especially the failures — list them so they aren't retried. -->
+- {approach} → {outcome}
 
 ## Next
--
+<!-- REQUIRED. The concrete next action; code can't hold "what to do next." -->
 
 ## Blocked / waiting on
--
+<!-- fill if relevant -->
 
 ## Notes
-<!-- Constraints, open questions, things an agent continuing this must know. -->
+<!-- fill if relevant. GUARDRAIL: only unscannable constraints / open questions /
+     things a continuing agent must know. Do NOT dump facts grep/types/code can give
+     — that is context stuffing and will rot. -->
 
 <!-- SELF-CHECK:
-- [ ] "Tried" lists at least the failed approaches (the unscannable part).
+- [ ] "Tried" lists the failed approaches (the unscannable part) — not just successes.
+- [ ] "Notes" contains nothing derivable from grep / types / code (no stuffing).
 - [ ] last-updated is set.
-- [ ] When status moves to done, this file moves to docs/archive/plan/ — do not leave it in the live list.
+- [ ] When status moves to done, this file moves to docs/archive/plan/ — not left in the live list.
+- [ ] Nothing here duplicates docs/handoff/ — handoff points to this file, not the reverse.
 -->

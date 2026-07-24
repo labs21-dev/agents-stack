@@ -132,7 +132,7 @@ fuzzy decision (which trade-offs to accept), run `meta-thinking-framework` first
 - `templates/handoff.md` — session handoff
 - `templates/SECURITY.md` — trust boundary record
 - `templates/CONSTITUTION.md` — non-negotiable principles
-- `templates/ADR.md` — decision record (the "why" + rejected)
+- `templates/adr.md` — decision record (the "why" + rejected)
 
 ## Self-loop
 
