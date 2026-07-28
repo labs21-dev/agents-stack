@@ -1,0 +1,39 @@
+# 第一類域預承諾日志模板
+
+# 預承諾日志（第一類域專用——邊界被機制釘死，純記賬紀律）
+domain_class: "first-class"
+mechanism_anchor: ""                           # 獨立於預測的機制證據（為什麼邊界被釘死）
+
+precommitted_domain: ""                        # 邊界在預測前已登記的域名
+domain_boundary_definition:                    # 邊界定義（機制給定，非預測者畫）
+  observables: []
+  generation_mechanism: ""                     # 為什麼這些事件共享同一生成機制
+
+predictions:
+  - id: 1
+    precommitted_at: ""                        # 預測前寫下，不可事後改
+    event_definition: ""                       # 可觀測、可判定兌現
+    resolution_time: ""
+    resolution_method: ""
+    claimed_domain: ""                         # 必須 = precommitted_domain，否則標記污染
+    forecast:
+      probability:
+      confidence_interval: [, ]
+    resolved: false
+    outcome: ""
+    brier_contribution:
+
+calibration:
+  historical_forecasts: 0
+  timespan: ""
+  brier_score:
+  calibration_curve_ref: ""
+
+contamination_log:                             # 事後重分類（「我這次預測其實屬於另一個域」）→ 不計入校準
+  - {prediction_id: , reclassified_to: "", reason: ""}
+
+# 適用範圍聲明
+scope_notice: |
+  本日志僅對第一類域（邊界被獨立機制釘死）產生校準意義。
+  在此預承諾協議是純記賬紀律（防事後改定義 / 跨域平均），不是校準來源。
+  它不能把邊界是判斷的域（2b / 第三類）變成可校準域——對那些域，凍結的還是個判斷，不是事實。

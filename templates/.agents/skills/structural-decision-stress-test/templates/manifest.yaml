@@ -1,0 +1,66 @@
+# 記憶庫 Manifest 模板
+
+# /memory_bank/decisions/{YYYYMMDD}_{slug}/manifest.yaml
+decision_id: "YYYYMMDD_slug"
+orchestrator_version: "2.5.0"
+slug: "slug"
+created: "YYYY-MM-DD"
+
+delegation_trace:
+  - agent: "redliner"
+    verdict: ""        # GO / NO-GO / DEGRADE
+    triggered_redlines: []
+    tokens_used: 0
+  - agent: "lens_analyst"
+    top_variables: []
+    additional_lenses_triggered: []
+    tokens_used: 0
+  - agent: "entity_modeler"
+    load_bearing_entities: []
+    cold_start_anchor: ""
+    tokens_used: 0
+  - agent: "game_simulator"
+    rounds: 0
+    degradation_trap_detected: null
+    zero_attractor_detected: false
+    tokens_used: 0
+  - agent: "red_team"
+    attack_modes_run: []   # LEGAL_RED / COMMERCIAL_RED / TECHNICAL_RED / NARRATIVE_RED
+    fatal_attacks: []
+    tokens_used: 0
+  - agent: "branch_explorer"
+    main_trunk_solution: ""
+    branch_count: 0
+    tokens_used: 0
+  - agent: "playbook_writer"
+    playbook_count: 0
+    guardrail_count: 0
+    tokens_used: 0
+
+artifacts:
+  phase0: "redlines.json"
+  phase1: "lens_analysis.json"
+  phase2: "entity_state_machines.json"
+  phase3: "game_simulation_log.json"
+  phase4: "red_team_scripts.json"
+  phase5: "counterfactual_branches.json"
+  phase6: "h_playbooks.yaml"
+
+cross_references:
+  - entity_id: ""
+    first_defined_in: ""
+    referenced_by: []
+    note: ""
+
+human_validation_status:
+  H1: "pending"
+  H2: "pending"
+  H3: "pending"
+
+conflicts_adjudicated:
+  - conflict_id: 1
+    agents: []
+    winner: ""
+    rule: ""
+
+degraded_chain: false   # 是否走簡化鏈（見 degradation-checkpoint.md）
