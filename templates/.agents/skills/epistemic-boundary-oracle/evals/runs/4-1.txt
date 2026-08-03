@@ -1,0 +1,115 @@
+QUERY_PRECISION
+
+被預測事件：某 AI 新創 A 是否拿到種子輪融資。平台自報精確度不足：
+
+- 兌現判定未釐清：「拿到種子輪」的可觀測口徑未給（是否含 convertible note / SAFE / 天使橋？金額門檻？是否需正式 close、簽約、還是口頭 term sheet？由誰、依什麼證據判定兌現？）
+- 視野未給：種子輪有時間窗口嗎？是 6 個月內、12 個月內、還是無期限？視野對第二類尾巴權重是承重變量，缺失即無法跑視野-穩定性閘。
+- A 的身份與時點未錨定：「拿到」的判定時點、失敗的判定時點（永久關門？轉型？被收購算不算？）都未定。
+
+按 Flow 步驟 0，定義不清本應先要求釐清才進分類。但因為分類結論在這一題對釐清與不釐清都不變（見下），我先把分類做掉，再回頭要求釐清——這是本次唯一允許的順序偏離，理由是分類是 ceiling 且結論穩健。
+
+DOMAIN_CLASS
+
+class: second-class-2b（被視野-穩定性閘與 2b 判準共同攔截，降格第三類路徑）
+
+判準依據（逐項對照 references/domain-classes.md）：
+
+- 平台自報的域是「AI Agent 種子輪成功率（核心團隊有分散式系統背景子域）」。這個域的「子域」邊界（「核心團隊有分散式系統背景」這個分類鍵）是預測者畫的判斷，不是任何制度公布的可觀測定義。沒有任何外部制度（交易所、監管、行業公會）公布過「種子輪成功率」這個量的版本號、判定口徑、公布頻率。
+- domain-classes.md 把這個域列為 2b 的例子。
+- 2a/2b 區分的判準是 regime_source：institutional = 2a，analyst-drawn = 2b。本題 regime_source = analyst-drawn（預測者畫的邊界）→ 2b。
+- 2b 有兩條尾巴：(i)「制度會變」（種子輪生態本身在漂移——估值帶、階段定義、資金可得性隨宏觀與 AI 拐點變），(ii) 邊界是判斷（「核心團隊有分散式系統背景」這個桶是事後挑出來的因果假設，偽裝成分類）。後者和第三類同一個病。
+
+額外攔截（即使有人想把這題硬歸 2a 也過不了）：
+
+- 視野-穩定性閘：種子輪生態的 regime 穩定半衰期以「季」計（2023→2024→2025 的 AI 種子輪環境已換過至少兩個 regime）。若視野 ≥ 數月，horizon / regime 穩定半衰期 幾乎必然超閾 → 協議層自動拒絕輸出機率，降格第三類。
+- 樣本數：n=15。在 2b 路徑下樣本數無關——同分布性是事後編的，15 個樣本和 150 個樣本一樣不可校準。Brier 在這個域無意義，不是「偏弱」，是「算錯了應用對象」。
+
+OUTPUT_FORM
+
+不輸出機率。降格為條件式警戒，委派 structural-decision-stress-test（SDST）。
+
+平台輸出的 p=0.7 越界：對一個 2b 域輸出了單一機率數字，違反 Hard rule 2（拒絕是預設）+ Hard rule 3（機率只在可校準窗口內）+ Hard rule 4（不輸出單一數字）。具體違反：
+
+- 把判斷性邊界（analyst-drawn 子域）當成校準對象——2b 當 2a 反模式。
+- 用單一數字 + 隱含「域穩定」假設——註腳式免責與不可校準默認成小兩種抹平並存。
+- Brier 0.28 被當成校準證據，但這個 Brier 是在預測者自己畫的桶裡算的——跨域平均的隱形版（不同時間段的種子輪環境被當同分布）。
+
+CALIBRATION_EVIDENCE
+
+不適用於機率路徑（本題已退出機率路徑）。但為了讓你看到平台提供的「校準證據」為何不能支撐 p=0.7，逐項標記：
+
+| 平台提供 | 評估 |
+|---|---|
+| 域：AI Agent 種子輪成功率（分散式系統背景子域） | regime_source = analyst-drawn → 2b，不准入機率路徑 |
+| 樣本數 15 | 在 2b/第三類下無意義；同分布性是事後編的，n 大不補乾净 |
+| Brier 0.28 | 算在預測者自畫的桶內，違反預承諾協議「不跨域平均」；Brier 在這個域不是校準證據，是過擬合計分 |
+| p=0.7 單一數字 | 違反不可坍縮輸出結構（無 regime_ref / regime_definition_observables / trip_wires / horizon_stability_ratio / soft_redefinition_suspect_index / confidence_tier / residual 欄） |
+| 視野 | 未給 → 視野-穩定性閘無法跑，默認應攔截 |
+| 觸發線 | 未挂 → regime 斷裂時機率不會自動失效 |
+| 校準曲線 | 未給 |
+| 軟改嫌疑 | 未給（種子輪生態的軟改——估值帶漂移、階段定義鬆緊——症狀未被監控） |
+
+置信等級：exit-to-SDST。結構層面，下游不應拿到 p_outcome_given_regime（這個鍵根本不該存在於此題）。
+
+RESIDUAL
+
+- 域邊界判斷性：殘餘來源是「核心團隊有分散式系統背景」這個分類鍵本身是因果假設，不是被機制釘死的事實。不可消除——加更多樣本、加世界模型、加 agent swarm 都不會把判斷性邊界變成機制釘死的邊界（見 references/impossibility.md：加層不改變可預測性，agent swarm 是過擬合放大器）。
+- regime 漂移：種子輪生態隨 AI 拐點與宏觀資金面漂移，屬第三類尾巴。不可消除。
+- 軟改殘餘：即使有人把這題硬抬成 2a，軟改（階段定義漂移、估值帶漂移）可能正在進行而症狀未顯，不可消除，只靠短視野壓低權重——但本題視野未給，連這個啟發式都掛不上。
+
+所有殘餘均不可消除，不可偷換成「可校準且小」。
+
+TRIP_WIRES
+
+本題不輸出機率，故無「機率失效」可標記。但若你要自行監控這個域何時可能變得可校準（或何時平台的 p=0.7 更不可信），可觀測量斷裂清單：
+
+- 種子輪階段的行業操作性定義被某外部制度公布並版本化（目前不存在 → 此題維持 2b）。
+- 「核心團隊有分散式系統背景」這個分類鍵被獨立第三方以預登記方式凍結（注意 prediction-log.md 誠實結論：第三方預登記補不乾净事前過擬合，第三方面對同一開放問題空間）。
+- AI 種子輪資金可得性 regime 發生斷裂（利率拐點、AI 投資主題切換、頭部基金策略轉向）→ 平台歷史樣本歸零，需從零重校。
+- 平台自畫子域的定義發生任何解釋漂移 → Brier 失效（且失效不會在 Brier 數字上顯形，Brier 看起來反而更好——tail-defense.md 抹平手法 3）。
+
+REFUSAL_OR_DELEGATION
+
+理由：
+1. 域邊界是預測者畫的判斷，非制度公布 → 2b，不准入機率路徑（domain-classes.md 以此為 2b 範例）。
+2. 視野未給；若補上且 ≥ 數月，視野-穩定性閘會攔截（種子輪生態 regime 半衰期短）。
+3. 樣本同分布性是事後編的，Brier 0.28 在此域無意義。
+4. 平台輸出單一數字 p=0.7，違反不可坍縮輸出契約。
+
+結論：這個預測不可信任。不是「校準偏弱所以打折信任」，是結構性越界——p=0.7 這個數字不該存在，Brier 0.28 不是它的支持證據而是它的病徵。
+
+建議：
+- 保留選項權：不要把 p=0.7 喂進下游決策（融資規劃、招募節奏、現金跑道）。決策應維持對「拿到／沒拿到」兩條分支的彈性。
+- 委派 structural-decision-stress-test：把「A 能否拿到種子輪」拆成可枚舉承重實體（候選投資人名單、里程碑、現金跑道、關鍵人、競品事件），輸出「若 H 錯則切換到分支」的條件式警戒——這是 2b/第三類域唯一不撒謊的輸出形式。本 skill 不自造條件式警戒，只路由。
+- 若平台想真正可校準：它必須 (a) 改用制度公布的邊界（種子輪生態目前沒有，所以這條路堵死），或 (b) 把域收窄到第一類可機制釘死的子問題（例如「給定已簽 term sheet 的 A，在 N 天內 close 的機率」——這接近微觀結構，可能可校準，但需要全新域與新樣本累積，不是現在這個域）。
+- 要求平台補件（若你要繼續評估它）：精確兌現定義、視野、判定方法、預承諾域登記時點、校準曲線、觸發線清單、軟改症狀監控。補不齊即維持拒絕。
+
+TAIL_DEFENSE_LOG
+
+本次啟用的尾巴防禦機制：
+
+- 不可坍縮輸出結構（防禦 A）：以輸出契約 8 欄要求檢驗 p=0.7——平台輸出坍縮成單一數字，缺 regime_ref / regime_source / regime_definition_observables / trip_wires / horizon_stability_ratio / soft_redefinition_suspect_index / confidence_tier / residual，判定為抹平。
+- 視野-穩定性閘（防禦 B）：視野未給 → 閘無法放行；種子輪 regime 半衰期短，補上視野後大概率攔截。
+- 2a/2b 區分（防禦 C/E 的前置）：regime_source = analyst-drawn → 2b，直接退出機率路徑，不進准入檢查。
+- 准入與降級分離（防禦 E）：本題在准入層就被擋（2b 不准入），症狀指數路徑未啟用——判斷性未被偷渡進准入。
+- 反模式自檢（failure-patterns.md）：命中 2b 當 2a、把不可校準當可校準且小（Brier 0.28 被當支持證據）、越界輸出機率、尾巴被抹平（單一數字 + 隱含域穩定）。
+- 第三方預登記幻覺：未觸發（平台未主張第三方預登記），但預先標記：即使平台改稱「域已預登記」，依 prediction-log.md 誠實結論仍補不乾净。
+
+尾巴未被抹平：本輸出未給出任何「打折後的 p」或「p=0.7 但請小心」式註腳；p=0.7 被整體判越界，不進入下游。
+
+---SKILL-USE META---
+- 實際讀過的 skill 檔案（絕對路徑）：
+  - /Users/kinshingwong/Documents/labs21/agents-stack/templates/.agents/skills/epistemic-boundary-oracle/SKILL.md
+  - /Users/kinshingwong/Documents/labs21/agents-stack/templates/.agents/skills/epistemic-boundary-oracle/references/domain-classes.md
+  - /Users/kinshingwong/Documents/labs21/agents-stack/templates/.agents/skills/epistemic-boundary-oracle/references/tail-defense.md
+  - /Users/kinshingwong/Documents/labs21/agents-stack/templates/.agents/skills/epistemic-boundary-oracle/references/prediction-log.md
+  - /Users/kinshingwong/Documents/labs21/agents-stack/templates/.agents/skills/epistemic-boundary-oracle/references/failure-patterns.md
+  - /Users/kinshingwong/Documents/labs21/agents-stack/templates/.agents/skills/epistemic-boundary-oracle/templates/refusal-output.md
+  - /Users/kinshingwong/Documents/labs21/agents-stack/templates/.agents/skills/epistemic-boundary-oracle/templates/prediction-output.md
+  - 未讀：references/impossibility.md、references/self-reference.md、templates/query-precision.md、templates/precommit-log.yaml、evals/、DESIGN.md（依其內容在已讀檔案中被引用而採信，未直接打開）。
+
+- 是否遵循 skill 的流程／輸出契約：partial（部分）。輸出契約 8 欄全部給出，並依 Flow 步驟 1–4 走完分類→閘→輸出→殘餘。但 Flow 步驟 0（問題未精確化應先要求釐清、不進分類）被偏離：本題兌現判定與視野未給，按規則應先要求釐清；我選擇先做分類，理由是分類結論（2b／越界）對釐清與否穩健不變，且使用者真正要的是「可不可信任」的判斷。這是有意識的偏離，已在 QUERY_PRECISION 段落顯式標記。
+
+- 其他偏離：
+  - CALIBRATION_EVIDENCE 欄在 skill 契約中是「若輸出機率」才必填；本題不輸出機率，我仍填了該欄，但將其重定位為「平台提供的證據為何不能支撐 p=0.7 的逐項否定」——這是對契約字面的擴張使用，意圖是讓使用者看到平台證據被否定的具體理由而非黑箱拒絕。
+  - 未實際調用 SDST（環境中未必掛載該 skill），僅以路由動作委派並說明 SDST 應輸出的形式；Hard rule 6 要求委派是路由動作，我遵守了「本 skill 不自造條件式警戒」的禁令，沒有自己編造分支樹。

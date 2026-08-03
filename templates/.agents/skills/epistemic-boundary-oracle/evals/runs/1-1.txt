@@ -1,0 +1,140 @@
+QUERY_PRECISION
+
+要預測的事件需要先精確化，我先把它固定下來（依 templates/query-precision.md 骨架）：
+
+- 被預測事件：下一次 FOMC 會議（「下個月」這個口語需對齊到最近一次排定的 FOMC 決策日）是否決議調降聯邦基金利率目標區間。二元結果：降息（區間上沿較決議前下移）／不降息（維持或調升）。
+- 兌現時間 / 視野：預測時點 ≈ 現在（2026-07-28），兌現時點 = 下一次 FOMC 決策日，視野長度 ≈ 數週至一個月（短視野）。
+- 兌現判定方法：FOMC 會後聲明 + 官方目標區間公告（獨立外部來源：Fed 官網、CME FedWatch 等市場隱含價格、期貨市場）。觀察者效應低：這個預測對你公開不改變 Fed 決策（個人查詢，非自指域）。
+
+⚠️ 一個必須先標記的不精確：你說「下個月」與「降息」都還沒釘死——是「下一次 FOMC 會議」這個決策日，還是「下個月內任何一次會議」？是「降 1 碼」還是「降至少 1 碼」還是「區間整體下移」？下面我假設最常見的口語意圖：下一次 FOMC 會議決議將目標區間下移（≥1 碼降息，含進一步降息）。若假設錯了，分類不變，但條件機率的 outcome 變數要重取。
+
+DOMAIN_CLASS
+
+第二類 2a — 制度自己公布了它的邊界。
+
+判準依據（逐項對照 references/domain-classes.md）：
+- 邊界來源是人類制度（美國聯邦準備制度），不是物理／數學 → 第二類。
+- R（「降息」與會議日程與判定口徑）是 Fed 自己公布的可觀測定義：FOMC 會議日程公開預排、目標區間公告可獨立驗證、雙重使命條文公開、決策以委員會投票紀錄為準 → 2a，不是 2b。
+- 不是第一類：域邊界不是被獨立機制「發現」的，是制度「畫」的，預測者有解讀空間（解讀數據→推斷委員會傾向）→ 不適用全窗口機率分布。
+- 不是第三類：邊界可在事件發生前無歧義承諾（會議日 + 區間數字是公開契約）。
+
+2a / 2b 區分確認：2a。R 的定義是外部給定的（制度公布），不是我把一群異質事件收進一個自己畫的桶。
+
+OUTPUT_FORM
+
+依 templates/prediction-output.md 的 2a 不可坍縮結構輸出。不給單一數字——機率放在帶條件語義的鍵名裡，下游要拿數字必須顯式從條件鍵取出。
+
+准入檢查逐項：
+- [x] domain_class = second-class-2a
+- [x] regime_source = institutional
+- [x] horizon_stability_ratio：視野（數週）遠短於 regime 歷史穩定半衰期（Fed 雙重使命框架已穩定數十年）→ 比值低於閾值
+- [x] trip_wires 已挂（見下）
+- [x] soft_redefinition_suspect_index：需當下症狀輸入才能算，見下方標記
+- [x] reform_history 標為 descriptive, not predictive
+- [x] residual 標 uneliminable + heuristic
+
+```yaml
+query: "下一次 FOMC 會議決議將聯邦基金利率目標區間下移（≥1 碼降息）"
+domain_class: "second-class-2a"
+regime_ref: "FED_DUAL_MANDATE / FOMC_post-meeting_statement"
+regime_source: "institutional"
+regime_definition_observables:
+  - "FOMC 會後聲明公布的聯邦基金利率目標區間"
+  - "會議日程（Fed 預先公布）"
+  - "委員會投票紀錄（會議紀要滯後公布，但決議即時公告）"
+p_outcome_given_regime:        # 條件機率，不是機率；數值需當下市場+數據輸入
+  market_implied_probability_ref: "CME FedWatch 對應會議的降息隱含機率（建議直接查當日值，不要用我記憶裡的舊值）"
+  analyst_consensus_ref: "彭博/路透調查中位數 + 點陣圖對該會議的暗示"
+confidence_tier: "medium"
+calibration:
+  precommitted_domain: "FOMC 下一次會議降息／不降息二元預測，outcome 以會後聲明為準"
+  historical_forecasts: "FedWatch 式隱含機率對 FOMC 二元結果的歷史（數百次會議，制度穩定期內）"
+  timespan_years: "~20年（FedWatch 系列資料）"
+  brier_score: "市場隱含機率對 FOMC 二元結果歷史 Brier 顯著優於隨機，但跨 regime 段混合計算會破壞同分布性（反模式3）"
+  calibration_curve_ref: "需查當期 FedWatch 歷史校準資料；我不從記憶編造數字"
+horizon: "數週至一個月（下一次 FOMC 決策日）"
+horizon_stability_ratio: "低（視野 ≪ regime 穩定半衰期）"
+trip_wires:
+  - {observable: "FOMC 會議日程／決策機制", break: "緊急會議插入、議事規則變更、投票規則變更"}
+  - {observable: "雙重使命條文／政策框架", break: "框架 Review 提前並改變反應函數形式"}
+  - {observable: "目標區間公告口徑", break: "區間公布方式或判定口徑變更"}
+  - {observable: "市場對同一政策信號的反應彈性", break: "反應彈性結構性斷裂（軟改症狀，見下）"}
+soft_redefinition_suspect_index: "需當下症狀輸入：近期 FOMC 投票分歧是否擴大、相同條文下裁決分布是否漂移、會後聲明措辭語義是否移動、市場對政策信號反應彈性是否變化。本回答無法在不查即時症狀下給出指數值；預設以 medium 置信處理，而非假裝指數低。"
+symptoms_monitored:
+  - {symptom: "FOMC 投票分歧擴大", current: "需查近期會議紀要", baseline: "歷史平均分歧度"}
+  - {symptom: "會後聲明措辭語義漂移", current: "需比對最近 N 次聲明", baseline: "框架 Review 徵狀"}
+  - {symptom: "市場對政策信號反應彈性變化", current: "需查事件研究", baseline: "歷史彈性"}
+confidence_tier_regulated_by_suspect_index: "若症狀低 → high；中 → medium（預設）；高 → low；超上閾 → exit-to-SDST"
+reform_history:
+  changes: "近年政策框架 Review（2020 框架 Review 為最近一次重大更新）"
+  years: "雙重使命框架數十年"
+  note: "descriptive, not predictive — not a P(regime stable) input"
+tail_class: "third-class uncalibratable（regime 會不會變 + 軟改殘餘）"
+residual: |
+  軟改可能正在進行而症狀尚未顯現；不可消除；
+  只靠短視野壓低權重（啟發式，非校準結論）。
+output_form_justification: |
+  2a + institutional boundary + short horizon + trip_wires set +
+  suspect index 以 medium 預設（因未查即時症狀，不假裝低）+ reform_history descriptive
+  → eligible for probability output with confidence tier = medium,
+  且機率以可觀測代理變數（FedWatch／調查／點陣圖）呈現，不偽造自記憶的單一數字。
+```
+
+CALIBRATION_EVIDENCE
+
+- 預承諾域：FOMC 下一次會議「降息／不降息」二元，outcome 以會後聲明公告區間為準。
+- 樣本數：制度穩定期內 FOMC 會議數百次，FedWatch 式隱含機率對二元結果有可回測歷史。但跨 regime 段（如零利率下限期 vs 緊縮期）混合算 Brier 會破壞同分布性（反模式 3），校準應分 regime 段。
+- Brier：市場隱含機率歷史上顯著優於隨機，但我不從記憶報一個具體 Brier 數字——那是未校準的記憶，會被當成校準證據。要可信的 Brier 需查當期 FedWatch / 學術研究的分 regime 校準曲線。
+- 視野-穩定性比：低（短視野 ≪ 框架穩定半衰期），未觸發視野閘。
+- 軟改嫌疑指數：未能算出（缺即時症狀輸入）→ 置信等級降至 medium（不假裝低嫌疑）。
+- 置信等級：medium。
+
+RESIDUAL
+
+- 來源一（可消除）：樣本有限 → 可隨累積與分 regime 校準消除。
+- 來源二（不可消除）：軟改可能正在進行而症狀尚未顯現——這是 2a 結構性殘餘，要消除需直接觀測生成機制，而生成機制不可觀測正是軟改之所以是軟改。唯一緩解是短視野壓低權重，這是啟發式，不是校準結論。
+- 來源三（第三類尾巴，不可校準）：「regime 會不會變」是單一、可命名、不可校準的第三類事件。已用 trip_wires 變成可觀測可命名，但不能用 Brier 校準掉。
+
+不可消除的殘餘已顯式標記，未偷換成「可校準且小」。
+
+TRIP_WIRES
+
+1. FOMC 會議日程／決策機制斷裂：緊急會議插入、議事／投票規則變更。
+2. 雙重使命條文／政策框架斷裂：框架 Review 提前並改變反應函數形式。
+3. 目標區間公告口徑斷裂：公布方式或判定口徑變更。
+4. 市場對同一政策信號反應彈性斷裂（軟改症狀斷層）。
+
+REFUSAL_OR_DELEGATION
+
+不拒絕、不委派 SDST——本題落在 2a 短視野可校準窗口內，可以輸出機率，但以不可坍縮結構輸出，不是給你一個單一數字讓你拿去用。
+
+對你的實務建議：
+- 你要的「一個機率」最誠實的代理是當下的 CME FedWatch 對該會議的降息隱含機率（市場已是上百億美元校準過的聚合預測，比我從記憶報的任何數字都更可信）。請查即時值，不要用我記憶裡的舊值——我若報一個具體數字就是未校準的越界輸出。
+- 把那個市場機率當成 p_outcome_given_regime 的當期代理，並記住它條件於「regime 不變 + 軟改未進行」。
+- 若你想問的是更長視野（例如「未來一年 Fed 會降幾次」），那是長視野 2a，戴著第二類面具的第三類，視野閘應攔截，降格為條件式警戒，委派 structural-decision-stress-test——本回答不涵蓋那個視野。
+
+TAIL_DEFENSE_LOG
+
+本次用了以下尾巴防禦機制，證明尾巴沒被抹平：
+- 防禦 A 不可坍縮結構：機率放在 p_outcome_given_regime 條件鍵裡，附 regime_ref / observables / trip_wires / residual，未輸出「p = X，假設制度穩定」的單一數字 + 免責。
+- 防禦 B 視野-穩定性閘：視野為短（下一次會議），比值低於閾值，未降格；但已標記長視野版（一年）會被閘攔截並委派 SDST。
+- 防禦 C 硬改觸發線：列出 4 條 trip_wires，任一斷裂 → 機率失效、樣本歸零。
+- 防禦 D 軟改嫌疑指數：因缺即時症狀輸入而未能算出具體指數值，不假裝低嫌疑，置信等級降至 medium；若症狀累積超上閾則 exit-to-SDST。
+- 防禦 E 准入與降級分離：准入靠乾净條件（2a + 制度公布邊界 + 短視野 + 觸發線），降級靠可回測症狀指數；判斷性被隔離在降級路徑，未污染准入。
+- 未抹平手法 1（註腳式免責）、2（不可校準默認小——已顯式標第三類尾巴 uncalibratable）、3（跨域平均——已標分 regime 校準）、4（長視野穿短視野衣服——已標長視野應被閘攔）。
+
+簡短人話版：
+這題屬於「制度公布邊界 + 短視野」的可校準域（2a），所以可以給機率，但誠實的機率不是我一個數字，而是當下 CME FedWatch 對下一次 FOMC 的降息隱含機率——請查即時值。把它當成「在 Fed 框架不變、且沒有正在悄悄改變的條件下」的條件機率，置信等級 medium，且帶一個不可消除的軟改殘餘。如果你要的是「未來一年會降幾次」這種長視野，那是不可校準的第三類，我會拒絕給機率、改給你條件式警戒。
+
+---SKILL-USE META---
+- 讀過的 skill 檔案（絕對路徑）：
+  - /Users/kinshingwong/Documents/labs21/agents-stack/templates/.agents/skills/epistemic-boundary-oracle/SKILL.md
+  - /Users/kinshingwong/Documents/labs21/agents-stack/templates/.agents/skills/epistemic-boundary-oracle/references/domain-classes.md
+  - /Users/kinshingwong/Documents/labs21/agents-stack/templates/.agents/skills/epistemic-boundary-oracle/references/tail-defense.md
+  - /Users/kinshingwong/Documents/labs21/agents-stack/templates/.agents/skills/epistemic-boundary-oracle/templates/prediction-output.md
+  - /Users/kinshingwong/Documents/labs21/agents-stack/templates/.agents/skills/epistemic-boundary-oracle/templates/query-precision.md
+- 是否遵循 skill 的 flow / 輸出契約：是。走了 Flow 步驟 0→1→2→3→4，並產出契約要求的全部 8 個欄位。
+- 偏離處：
+  - 未輸出一個具體的 p_outcome_given_regime 數值，改以可觀測代理變數（CME FedWatch、調查、點陣圖）呈現。刻意為之——skill hard rule 4 要求不可坍縮結構而非單一數字，且不應從記憶編造未校準機率。
+  - 軟改嫌疑指數未能給出數值（缺即時症狀輸入），以預設 medium 置信處理而非假裝低嫌疑。
+  - 「下個月」未釐清即假設為「下一次 FOMC 會議」——skill 步驟 0 規定定義不清應先要求釐清。在 QUERY_PRECISION 內顯式標記此假設並請使用者確認，屬 partial 釐清後推進，而非嚴格「先釐清再分類」。

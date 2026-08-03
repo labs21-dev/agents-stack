@@ -1,0 +1,42 @@
+{
+  "skill_name": "epistemic-boundary-oracle",
+  "description_under_test": "v1 (committed 9c7fadc)",
+  "runs": [
+    {
+      "eval_id": 1,
+      "run": 1,
+      "triggered": true,
+      "evidence": "agent read SKILL.md + 2 references (domain-classes.md, tail-defense.md) + 2 templates (prediction-output.md, query-precision.md); self-reported following Flow steps 0-4 and producing all 8 contract fields; self-reported one partial deviation (assumed 'next FOMC meeting' for unclarified '下個月' instead of demanding clarification first per Flow step 0)",
+      "raw_output_ref": "evals/runs/1-1.txt",
+      "expectations_passed": [],
+      "expectations_failed": [],
+      "pass_rate": null,
+      "grader": "human-pending"
+    },
+    {
+      "eval_id": 4,
+      "run": 1,
+      "triggered": true,
+      "evidence": "agent read SKILL.md + 4 references (domain-classes.md, tail-defense.md, prediction-log.md, failure-patterns.md) + 2 templates (refusal-output.md, prediction-output.md); self-reported producing all 8 contract fields; self-reported PARTIAL contract adherence — deviated from Flow step 0 (classified before demanding clarification of undefined resolution criteria + horizon), and expanded CALIBRATION_EVIDENCE field beyond contract (filled it as a negation table though contract says it's required only when outputting probability); did not actually invoke SDST (routed-only, per Hard rule 6)",
+      "raw_output_ref": "evals/runs/4-1.txt",
+      "expectations_passed": [],
+      "expectations_failed": [],
+      "pass_rate": null,
+      "grader": "human-pending"
+    }
+  ],
+  "aggregate": {
+    "trigger_rate": 1.0,
+    "mean_pass_rate": null,
+    "note": "trigger_rate over 2 evals × 1 run each (improvement-loop asks ≥3 runs for reliable trigger rate; this is a first-pass manual trial, not a full trigger-rate measurement). pass_rate left for human grading per improvement-loop step 3 (user is the external anchor) + role-separation discipline (verifier ≠ generator)."
+  },
+  "open_observations_for_grader": [
+    "Eval #1: agent flagged its own deviation from Flow step 0 (assumed meaning of unclarified '下個月' instead of demanding clarification first). The skill's Flow step 0 says definition-unclear → demand clarification, do NOT classify. Did the agent's 'mark the assumption and proceed' satisfy the spirit, or is this a real pass/fail on the 'do not classify until precise' expectation?",
+    "Eval #1: agent refused to emit a numeric p_outcome_given_regime, substituting observable proxies (CME FedWatch ref). Is this faithful to Hard rule 4 (non-collapsible structure, no single number) or an over-correction that leaves the required output field empty?",
+    "Eval #1: soft_redefinition_suspect_index left uncomputed (no live symptom input), defaulted confidence_tier to medium rather than pretending low. Is 'medium-by-default-when-unmeasured' correct per tail-defense.md defense D, or should it have downgraded further?",
+    "Eval #4: agent deviated from Flow step 0 (classified before demanding clarification of resolution criteria + horizon) but flagged it explicitly and argued the classification conclusion is robust to clarification. Is this partial adherence acceptable, or a hard fail on step 0?",
+    "Eval #4: agent filled CALIBRATION_EVIDENCE (a contract field marked 'required only when outputting probability') as a negation table, despite not outputting probability. Contract over-expansion or reasonable transparency?",
+    "Eval #4: agent routed to SDST but did not actually invoke it (SDST may not be mounted in that environment). Hard rule 6 says delegation is a routing action — is routing-only sufficient, or does 'delegation' require the downstream skill to actually run?",
+    "Both: only 1 run each. Triggering is stochastic; improvement-loop asks ≥3 runs for a real trigger_rate. This trial establishes the skill IS consulted (triggered=true on both) but does not measure trigger reliability."
+  ]
+}
