@@ -47,7 +47,19 @@ Use `templates/skill-skeleton/`. Write `SKILL.md` with frontmatter (name + descr
 The frontmatter `description` is the **primary triggering mechanism** — it must say both *what the skill does* and *specific contexts when to use it*. All "when to use" info goes here, not in the body.
 
 ### Interview & research
-Proactively ask about edge cases, I/O formats, example files, success criteria, dependencies. Don't write test prompts until this is pinned down.
+Proactively ask about edge cases, I/O formats, example files, success criteria, dependencies. Don't write test prompts until this is pinned down. This interview doubles as the **intake batch**: ask all Level-3 questions (see Question Audit below) in one pass here, so the drafted skill never needs to interrupt its user mid-run.
+
+### Question Audit / autonomy profile (mandatory before finalize)
+A skill that makes its user interrupt mid-run is a leaky SOP — questions are defects, and their placement is a design decision. Before finalizing any skill:
+
+1. **Simulate a run** and count every point where the skill would want to "ask the user."
+2. For each point, exactly one of three fates:
+   - **Default it** — the skill carries the preset answer (e.g. "prefer CDP when a browser is present"), states it, logs it, never asks.
+   - **Gatable it** — the answer is checkable from the environment (repo, logs, eval evidence, feature map). The skill queries the environment, not the human.
+   - **Register it** — an explicit upgrade point for decisions that change the conclusion, cannot be derived, AND are irreversible or high-controversy. Registered points must name their trigger conditions. Escape hatches like "ask the user as needed" are not allowed — an upgrade point without criteria is a hole, not a feature.
+3. **Silent guessing is banned.** Every decision point must be one of: has a default, has a checkable gate, or is a registered upgrade point. No fourth path — a silent guess is tomorrow's revert.
+4. **Problems move to the edges, not into the middle.** All registered upgrade points fire at intake (batched, one pass) or at delivery (as a flagged list the user audits after the fact) — never sprinkled through execution.
+5. Output an **autonomy profile** for the skill: which decisions have defaults, which are environment-answered, which are registered human gates. A skill without this profile has random autonomy.
 
 ## L1 — Evaluation
 
@@ -92,3 +104,5 @@ When done, package the skill. See `references/packaging.md`.
 ## Reflexivity self-check
 
 This skill is itself a meta-skill (a skill that makes skills). Its "what makes a good skill" standard is partly borrowed from the upstream official skill-creator (an external anchor) and partly refined through use. It is an N=1 design until validated by repeated real use. The L1↔L2 calibration above is its built-in defense against self-validating mediocrity.
+
+The Question Audit / autonomy profile is also N=1: it encodes one autonomy philosophy ("questions are defects, batch them at the edges"). If real usage shows skills whose registered upgrade points fire too often (question rate stays high) or too rarely (reverts from silent guessing), re-examine the three-fate rule before blaming users or agents.

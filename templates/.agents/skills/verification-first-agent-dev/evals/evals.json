@@ -1,0 +1,82 @@
+{
+  "skill_name": "verification-first-agent-dev",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "幫我在 app 裡加一個書籤功能，用戶可以收藏文章，回頭能找到。",
+      "expected_output": "觸發用法 A。輸出改寫後的驗證劇本：造數據（≥3 篇文章）、收藏/取消/列表恢復的正路徑斷言、≥2 邊界（重複收藏同一篇、中文標題、空列表）、失敗協議（修到全部通過）、環境工具（Web→CDP / 桌面→啟動+截圖）。不改需求本身，只補驗證權。",
+      "expectations": [
+        "輸出包含造數據步驟且數量明確",
+        "正路徑斷言查具體結果（如列表只出現已收藏項），不是『無報錯』",
+        "至少 2 個邊界（重複收藏 / 空 / 中文至少佔 2）",
+        "含失敗協議：任何一步失敗繼續修直到全部通過",
+        "含環境工具對齊（CDP 或啟動+截圖等，不是『人工檢查』）"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "我的項目裡 agent 總是找不到功能入口，每次都要我自己截圖給它看頁面在哪。好煩。",
+      "expected_output": "診斷為 L0→L2 缺口（feature map 缺失），推薦建 feature map 卡。輸出用 templates/feature-map-template.md 結構的示例卡（可拿用戶提到的功能做例子），強調驗證步驟是卡的承重部分 + 地圖時效錨（驗證失敗先懷疑地圖過期）。",
+      "expectations": [
+        "診斷為 feature map / L2 缺口，不是『prompt 寫好點』",
+        "輸出 feature map 卡結構示例（入口/驗證步驟/相關代碼/常見問題）",
+        "含地圖腐爛防禦（時效錨 / 驗證失敗先查地圖）",
+        "不建議繼續人工截圖餵圖（那是 L0 循環）"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I keep telling the agent 'don't import across feature directories'. Must have said it 5 times this week. It keeps forgetting.",
+      "expected_output": "觸發 L3 硬約束路徑：違反頻率×後果判準（5 次 → 候選）。推薦 lint no-restricted-imports / import 邊界掃描 + CI 掛。給出升級流程關鍵步驟：warn 先行收集誤報 → 誤報裁決 → 轉 fail；報錯 message 寫成對 agent 的現場教學。明確說『不要再靠模型記住』。",
+      "expectations": [
+        "推薦 lint/import 邊界掃描 + CI，而非把這句話寫進 AGENTS.md",
+        "含 warn 先行 → 誤報裁決 → 轉 fail 的升級流程",
+        "報錯 message 面向 agent（含原因與改法）",
+        "指出 soft 層（AGENTS.md）是錯誤載體"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "我的驗證腳本全綠，agent 說功能沒問題，但用戶回報搜索中文出亂碼。驗證不是都過了嗎？",
+      "expected_output": "診斷為假綠（斷言弱：只查無報錯/exit code，未查結果；或測試數據不含中文）。兩個動作：修斷言（查結果+中文邊界）+ 護欄反測（拿已知壞例子反向測斷言——故意引入亂碼 bug，斷言必須紅）。若 agent 自驗證可信度被質疑，提及驗證者不得是生成者。",
+      "expectations": [
+        "診斷為斷言弱/數據缺失的假綠，不是『agent 又錯了』",
+        "提出用已知壞例子反向測斷言（護欄反測）",
+        "建議把中文邊界寫進驗證規格",
+        "可提及驗證者不得是生成者（連結 agentic-clean-discipline）"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "驗證基建跑得不錯，我想讓 agent 直接自動合併 PR 到 main，跟上潮流。現在就開嗎？",
+      "expected_output": "觸發放權不等式：先過 templates/autonomy-checklist.md 前置清單。若清單未過（L2 地圖/L3 紅線/L4 eval 近 3 次全綠任一缺）→ 停在本級給最小補齊清單。強調監控指標是 revert rate + 事後 bug 率，不是吞吐量；含自動收權觸發器。明確反對『跟上潮流』作為放權理由。",
+      "expectations": [
+        "不放權於清單未過之前——引用放權不等式",
+        "要求 revert rate + 事後 bug 率作為監控指標，明確排除吞吐量指標",
+        "含自動收權路徑/觸發器",
+        "建議漸進：單任務自驗證 → 單域 → 擴域，不一步到位全 main"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "就寫個一次性腳本把 CSV 轉個格式，也要搞你那套驗證劇本嗎？",
+      "expected_output": "觸發降級出口：明說 L1 即終點甚至更輕——一次性腳本、可隨手回滾的改動不值得 L2+。直接給一句含最小驗證的 prompt（跑一次+抽查輸出+exit code），不鋪基建。明確說不鋪。",
+      "expectations": [
+        "明說不需要完整劇本/基建（降級出口）",
+        "仍給最小驗證（自己跑 + 抽查輸出 + exit code）",
+        "不推薦建 feature map / verification.md / CI 紅線"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "AGENTS.md 和你這套 verification / feature map 有什麼區別？我是不是寫好 AGENTS.md 就夠了？",
+      "expected_output": "說清分工：AGENTS.md 是 soft 約束（靠模型記住，會忘），四件套是機制（feature map=知道在哪、verification=能自證、硬約束=機制擋、eval=監控基建本身）。判準：會被忘的約束升 hard；掃代碼掃得出的不寫進文件。引用『說過三次』判準。可用 coding-docs-standard 補充 agent-facing 文件規劃。",
+      "expectations": [
+        "區分 soft（記憶）與 hard（機制）兩層",
+        "指出 AGENTS.md 會被遺忘，報錯/紅線不會",
+        "不否定 AGENTS.md 的存在價值，但給出內容遷移判準（說過三次→升級）",
+        "可指向 coding-docs-standard 作為文件規劃鄰居"
+      ]
+    }
+  ]
+}
