@@ -1,9 +1,9 @@
 ---
-name: feature-dev-e2e
+name: agentic-dev-e2e
 description: End-to-end agentic feature development AND bug-fix workflow. Use when the user gives a feature goal or wish item (e.g. "make calorie detection automatic", "add X to the app", "I want Y behavior") OR reports a bug to be fixed (e.g. "the banner can't be cleared", "this crashes when...", "this shows the wrong language") and expects AI to handle analysis → scope/diagnosis → behavior spec (frontend+backend) → happy/unhappy/edge paths → industry practice → test cases → verifiable steps → code → self-run verification → final report. Also use when the user says "do the feature workflow", "run the e2e flow", "fix this via the workflow", or after a vague feature wish / bug report that would previously trigger ad-hoc exploration. Produces fixed-format artifact documents at every phase. NOT for pure research questions or doc-only tasks; bug TRIAGE without a fix goal is out of scope, bug FIX is in scope.
 ---
 
-# Feature Dev E2E
+# Agentic Dev E2E
 
 Turn a one-line feature wish into verified, reported code with at most two
 human touch points. The human provides the wish and (at risk gates) value
@@ -23,7 +23,8 @@ where they sit.
    state.
 2. **Evidence, not declarations.** Verify-report items cite raw evidence:
    test-run summaries, build logs, screenshots, console output paths. A bare
-   "passed" without evidence is a failed check.
+   "passed" without evidence is a failed check. Claim "no gate failure
+   observed", never "verified correct".
 3. **Verifier ≠ generator.** Verification runs in a fresh subagent context
    (or a separate non-interactive command), never the same context that wrote
    the code self-certifying.
@@ -33,6 +34,19 @@ where they sit.
 5. **STOP beats guess.** Any gate failure, environment preflight failure, or
    unresolvable ambiguity → stop with a written STOP note. Silent guessing is
    banned.
+6. **Grade reopens on evidence.** Downstream evidence can falsify the
+   Phase 0 grade — failure density far above what the grade predicted, or a
+   delegated run reporting danger the initial grade missed → re-grade
+   (usually up) and re-run denser gates. A grade is a working hypothesis,
+   not a verdict.
+
+## Light entry
+
+If the input is a bare one-liner and the human wants a prompt to hand an
+agent (not the full pipeline), rewrite it into a verification script
+instead — test data → operation → result assertions → ≥2 boundaries →
+failure protocol. Deliver the script; the full pipeline subsumes it when
+wanted.
 
 ## Flow
 
@@ -133,6 +147,10 @@ judgments, decides on commit. Report ends with an explicit
 | L1 | auto | build + smoke + human skim | copy tweaks, flags, prototypes |
 | L2 | auto | full tests + UI walk + evidence | routine features |
 | L3 | **STOP, human sign-off** | L2 + adversarial spec + line-read flag | money, quota, data loss, privacy, product voice, deploys |
+
+Autonomy granted to an agent is capped by the verification infrastructure it
+runs on — never by willingness. When tempted to raise autonomy
+(auto-commit, parallel agents), raise the infrastructure first.
 
 Grade rules live in `references/risk-gates.md`. Bug-fix mode differences in
 `references/bugfix-mode.md`. Delegation rules in

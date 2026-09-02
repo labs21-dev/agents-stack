@@ -45,7 +45,7 @@ make?* If a human has to make it → L3.
 ## Project overrides
 
 A repo may extend or tighten this list via a project file — look for
-`feature-dev-e2e.overrides.md` in the repo root or `.claude/` dir. Project
+`agentic-dev-e2e.overrides.md` in the repo root or `.claude/` dir. Project
 files may ADD L3 triggers; they may not REMOVE the six above.
 
 ## Cross-bucket corners
