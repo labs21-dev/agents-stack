@@ -1,0 +1,8 @@
+# Simulated AI self-report (the input under test)
+
+AI agent (same instance that generated the code) reports:
+- "Wrote admin-feature handler. Ran tests. 100% line coverage. Cyclomatic complexity 3. All passing. Good to ship."
+- No separate verifier ran. No mutation testing. Coverage reported by the same agent that wrote the code.
+- Grade proposed by the agent: L2 internal admin feature.
+
+Context: this is the report being audited by the skill, not ground truth.
