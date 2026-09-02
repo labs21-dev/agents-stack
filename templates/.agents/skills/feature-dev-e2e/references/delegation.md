@@ -1,43 +1,27 @@
-# Delegation: handing work to sibling skills
+# Delegation: when this workflow hands work to other skills
 
-This skill is self-contained for grading, spec hardening, verification, and
-metrics. It delegates only where a sibling owns a capability it should not
-re-implement, and adopts the sibling's output as its own artifacts.
+This workflow is the orchestrator. It does not re-implement capabilities that
+sibling skills own — it delegates at fixed points and adopts their outputs as
+its own artifacts.
 
 ## Delegation table
 
-| Situation | Delegate to | What this skill adopts |
+| Situation | Delegate to | What this workflow adopts |
 |---|---|---|
-| Protocol character: concurrency, retries/idempotency, distributed handoff, authz/trust boundary, lifecycle state machine, approval/cancel races | `protocol-adversarial-design` | its invariants + alignment tests become the spec's backend section and the verify gate's core |
-| The wish itself is fuzzy at the product level (not just technically vague) | `meta-thinking-framework` | its output becomes the spec's "Open judgment calls" section |
-| UI-affecting change needs simulator/device evidence | repo's device-interaction skill, or direct simulator tooling | screenshots + hierarchy dumps cited as evidence rows |
+| Phase B: task has protocol character (concurrency, retries/idempotency, distributed handoff, authz/trust boundary, lifecycle state machine, cancel races) | repo's adversarial/protocol-design skill (e.g. `protocol-adversarial-design`) | its invariants + alignment tests become the spec's backend section and the verify gate's core |
+| Phase 0/Phase C: deciding how much verification a grade deserves | repo's clean-discipline skill (e.g. `agentic-clean-discipline`) | its risk matrix for L1/L2/L3 detail; its gate chain for L2/L3 verify depth |
+| Phase C: UI-affecting change needs simulator/device evidence | repo's device-interaction skill, or direct simulator tooling | screenshots + hierarchy dumps cited as evidence rows |
+| Phase A: the wish itself is fuzzy at the product level (not just technically vague) | repo's multi-lens analysis skill (e.g. `meta-thinking-framework`) | its output becomes the spec's "Open judgment calls" section |
 | Tests need modernizing to repo-standard test style | repo's test-modernizer skill if present | modernized test cases in the build report mapping |
 
 Rules:
-
 - Delegation is per-phase and named; the build report records which skill
   produced which section.
 - If the repo has no matching skill, do the work inline — never block on a
-  missing sibling. The table is opportunistic, not a hard dependency.
+  missing sibling. The delegation table is opportunistic, not a hard
+  dependency.
 - Never delegate Gate decisions. Gates belong to the human; skills inform
   them, they don't replace them.
-
-## Protocol delegation detail
-
-1. Hand the protocol slice to `protocol-adversarial-design`.
-2. It runs its own gate. If it STOPs → the protocol isn't dangerous enough
-   for a formal contract. Write ordinary acceptance criteria; don't force a
-   model.
-3. If it passes → it returns hard invariants + alignment tests (3-5 cases).
-4. Adopt invariants as this task's spec. Feed alignment tests into the verify
-   gate as required-pass core. Copy "model boundaries / uncovered surfaces"
-   into the category disclosure and assumptions-to-verify.
-5. Feedback arrow: if the delegated run reports danger above the initial
-   grade → trigger `feedback-upgrade.md` (re-grade up, denser gates).
-
-Do NOT delegate: CRUD with a single writer; pure generation with no shared
-state; any case where the dangerous interleaving isn't real (ceremony, not
-discipline).
 
 ## Environment preflight recipe
 
@@ -53,10 +37,10 @@ Phase 0's check adapts to the repo; the shape:
 5. Any hard failure → 00-stop.md, tell the human exactly what's missing.
 
 Known-flaky-environment lessons (from real runs, generalized):
-
 - Simulator names change between Xcode versions — look the device up, never
   hardcode a name.
 - Some test runners mutate config files as a side effect; check `git status`
   after a test run and note (not revert) any unexpected diff.
-- If a tool silently succeeds while producing empty/garbage output, treat
-  "empty output with exit 0" as a failure — evidence rules apply to tools too.
+- If a tool silently succeeds while producing empty/garbage output (e.g.
+  upscaling with a wrong model path), treat "empty output with exit 0" as a
+  failure — evidence rules apply to tools too.

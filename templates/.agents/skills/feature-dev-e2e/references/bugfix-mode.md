@@ -4,6 +4,7 @@ A bug report is a wish whose spec is "expected behavior". The pipeline is
 identical — only Phase A's artifact shape and three extra disciplines change.
 Risk grading is unchanged: a bug in billing logic is L3 exactly like a billing
 feature. (Real case: "should this failure refund?" was a bug-fix L3 gate.)
+
 ## Phase mapping
 
 | Standard phase | Bug-fix shape |
@@ -72,18 +73,3 @@ before fixing.>
 - existing suite green (evidence), AND
 - blast-radius scenarios from the diagnosis checked or explicitly listed as
   unverifiable.
-
-## Bug-fix rewrite example (Lane A task-shaping)
-
-原話：> 刪除歷史記錄失敗，修一下
-
-劇本：
-> 修復刪除歷史記錄失敗的問題。
-> 先啟動開發版本，創建三條記錄，親自復現這個 bug（操作 + 記錄實際錯誤現象與日誌）。
-> 找到根因後修復。然後驗證：
-> 刪除單條 → 列表即時更新且計數正確；刪除後重啟應用 → 記錄仍已刪除；
-> 連續快速刪除兩條 → 不崩潰、兩條都消失；刪除最後一條 → 空狀態正常顯示。
-> 全部通過後，報告根因一句話 + 每步驗證結果。
-
-關鍵判斷：**先復現再修**（不許 agent 憑猜測改）+ 持久化驗證（重啟後仍刪除）
-+ 根因報告（沉澱素材）。更多改寫範例見 `rewrite-examples.md`。

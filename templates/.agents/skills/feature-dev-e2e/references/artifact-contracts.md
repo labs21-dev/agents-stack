@@ -106,23 +106,9 @@ STATUS: draft | passed | failed
 | 3 | FE golden path | <simulator action> | <screenshot path> | pass/fail |
 | 4 | … verifiable step from spec | | | |
 
-## Gate depth (L2/L3 only)
-<for L2/L3 grades: spec self-check score N/5; mutation (sampled/full) result;
-metric combo reading (combined, not per-metric pass lines); L3 human
-line-read required? See spec-self-check.md / metric-combo-rules.md. L1: write
-"L1 — gates not opened".>
-
 ## What AI could not verify
 <list: needs real device / real users / production data / human taste /
 multi-session effects. NEVER empty on UI-affecting changes.>
-
-## Category disclosure (mandatory)
-This task's quality judgment is gate-based. Structurally uncatchable by
-gating: [abstract smell / cross-module emergence / naming-intent drift].
-Task sensitive to those → fall back to human reading.
-
-## Assumptions to verify
-| Assumption | Risk | Lowest-cost test |
 
 ## Failed checks & analysis
 <each failure: what happened, suspected cause, whether it's a code bug or a
@@ -171,13 +157,10 @@ STATUS: waiting-for-human
 ```markdown
 # STOP: <feature name>
 STATUS: failed | waiting-for-human
-
-Task: <one line>
 ## Failed screens / gate
-<what stopped — for reverse-gate STOPs name the screen(s)>
+<what stopped>
 ## Why
 <one paragraph>
 ## What the human should do
-<specific unblock action; recommended alternative:
-human line-read | meta-thinking-framework | protocol-adversarial-design>
+<specific unblock action>
 ```
