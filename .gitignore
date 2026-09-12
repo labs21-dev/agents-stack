@@ -3,3 +3,6 @@
 *.pyc
 /.local
 /.agents-stack
+/.claude/
+/.pytest_cache/
+__pycache__/
