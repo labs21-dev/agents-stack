@@ -127,7 +127,7 @@ Required:
   "approvedAt": "RFC3339"
 }
 
-## RAG Index
+## Media RAG Index
 
 ```text
 <storage-root>/indexes/rag/rag.sqlite3
@@ -139,6 +139,33 @@ Tables:
 - `chunks`: source file, character offsets, heading breadcrumb, language, text
 - `chunks_fts`: FTS5 trigram index over text, path, heading, and language
 - `meta`: index metadata such as `lastIndexedAt`
+- `extractors`: extractor name, version, capability, and confidence for media files
+
+Media chunks use one contract across file types:
+
+```json
+{
+  "path": "assets/report.pdf",
+  "text": "...",
+  "locator": {"page": 3, "start": 120, "end": 380},
+  "heading": "Overview",
+  "language": "pdf",
+  "extractor": "pdftotext",
+  "extractorVersion": "1.0",
+  "capability": "text",
+  "confidence": 1.0
+}
+```
+
+Locator examples:
+
+| Media | Locator |
+|---|---|
+| text / code | character offsets |
+| PDF / DOCX | page plus character offsets |
+| image / screenshot | bounding box or tile coordinates |
+| audio | start and end seconds |
+| video | timestamp plus optional frame path |
 
 Query output must retain:
 
@@ -156,4 +183,5 @@ Query output must retain:
 
 The SQLite database is generated local state and must not be committed. An index
 may live in the global scope only when its corpus and citations are safe to
-reuse across projects.
+reuse across projects. Memory drawers must never be indexed here; agent-memory
+is a separate trust domain.

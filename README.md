@@ -37,7 +37,7 @@ Most skills can be copied into any repo independently.
 | `read-image` | Answer questions about local images |
 | `read-video` | Answer questions about local or remote video |
 | `read-audio` | Transcribe or analyze local audio |
-| `local-rag` | SQLite FTS5 retrieval over project files with citations |
+| `local-rag` | SQLite FTS5 multimedia retrieval with source locators and citations |
 | `agent-memory` | Four-duty memory protocol (working / semantic / episodic / procedural) |
 
 Entry points:

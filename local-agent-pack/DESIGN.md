@@ -531,7 +531,7 @@ local-agent-pack/
 
 ---
 
-### 4.6 `local-rag`
+### 4.6 `local-rag`（multimedia retrieval）
 
 #### 觸發
 
@@ -551,22 +551,21 @@ local-agent-pack/
 
 #### 流程
 
-1. Ingest：
-   - documents
-   - code
-   - markdown
-   - PDF
-   - audio/video transcript
-2. Chunk：
-   - 依語意或段落
-   - 保留 metadata
-3. Index：
-   - 首選 SQLite + FTS5
-   - 可選 vector index
-4. Retrieve：
-   - keyword + vector hybrid
-   - rerank
-   - 回附引用
+1. Ingest by media extractor, not by separate indexes:
+   - Phase 1: text, code, Markdown, PDF/DOCX, image metadata, screenshot OCR, image OCR
+   - Phase 2: audio metadata and transcript chunks
+   - Phase 3: video metadata, keyframe OCR, and transcript chunks
+2. Normalize every source into one universal chunk primitive:
+   - `text`: searchable representation
+   - `locator`: how to return to the original media
+   - `metadata`: extractor, version, capability, confidence
+3. Index:
+   - one SQLite + FTS5 baseline index
+   - optional vector/embedding backend later
+4. Retrieve:
+   - hybrid BM25 + exact-match first
+   - optional rerank/backend later
+   - return source locators, not media-type-specific result formats
 
 #### 輸出
 
@@ -864,6 +863,25 @@ Phase 2 `local-rag` executable scope:
    - zero-result output is a valid successful retrieval, not a fabricated answer
 3. Vector embeddings and local reranking remain deliberately out of Phase 2.
    The baseline must prove recall and citation precision before adding another index.
+
+Media retrieval phases:
+
+1. Media Phase 1: text, documents, images, and screenshots
+   - retain the existing SQLite FTS5 core
+   - add PDF/DOCX text extraction
+   - add image metadata and optional OCR
+   - add screenshot OCR with bbox/tile locators
+2. Media Phase 2: audio
+   - add `ffprobe` metadata
+   - add transcript chunks when a local ASR extractor is available
+   - never fabricate a transcript; metadata-only indexing is a valid degraded result
+3. Media Phase 3: video
+   - add `ffprobe` metadata
+   - add keyframe extraction and OCR
+   - add audio-track transcript chunks when available
+   - cite timestamps and frame paths
+4. A visual embedding backend such as PixelRAG may be added only after the
+   FTS + locator baseline proves recall and citation precision.
 
 ### Phase 3：Model and cost guardrails
 
