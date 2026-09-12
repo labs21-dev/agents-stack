@@ -2,7 +2,7 @@
   "name": "local-agent-pack",
   "version": "0.1.0",
   "runtime": "agent-skills-v1",
-  "phase": 1,
+  "phase": 2,
   "provider": "openrouter",
   "skills": [
     "generate-image",
@@ -17,7 +17,8 @@
   ],
   "entrypoints": {
     "openrouter": "scripts/openrouter.py",
-    "doctor": "scripts/doctor.py"
+    "doctor": "scripts/doctor.py",
+    "rag": "scripts/rag.py"
   },
   "defaults": {
     "storageRoot": ".local-agent-pack",

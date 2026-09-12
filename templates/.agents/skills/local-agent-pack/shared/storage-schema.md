@@ -70,4 +70,32 @@ Required:
   "bytes": 123,
   "approvedAt": "RFC3339"
 }
+
+## RAG Index
+
+```text
+.local-agent-pack/indexes/rag/rag.sqlite3
 ```
+
+Tables:
+
+- `files`: relative path, size, mtime, SHA-256, language, indexed timestamp
+- `chunks`: source file, character offsets, heading breadcrumb, language, text
+- `chunks_fts`: FTS5 trigram index over text, path, heading, and language
+- `meta`: index metadata such as `lastIndexedAt`
+
+Query output must retain:
+
+```json
+{
+  "path": "docs/x.md",
+  "start": 10,
+  "end": 220,
+  "heading": "Overview / Usage",
+  "language": "markdown",
+  "score": 0.03278689,
+  "text": "..."
+}
+```
+
+The SQLite database is generated local state and must not be committed.

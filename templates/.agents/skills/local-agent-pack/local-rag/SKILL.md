@@ -5,14 +5,34 @@ description: Build a local SQLite full-text index for project files and answer q
 
 # Local RAG
 
-Phase 1 defines the contract; the executable local index is Phase 2.
+Use `scripts/rag.py`.
+
+Index a corpus:
+
+```bash
+scripts/rag.py index path/to/corpus
+```
+
+Retrieve path-backed chunks:
+
+```bash
+scripts/rag.py query "how does image capability validation work" --limit 8
+scripts/rag.py query "OpenRouter" --path-filter docs/
+```
 
 Workflow:
 
-1. Validate `corpusPath`.
-2. Ingest text-like project files and skip unsupported binaries with a report.
-3. Chunk by paragraph while preserving source paths and character offsets.
-4. Store chunks and FTS data locally in `.local-agent-pack/indexes/rag/`.
-5. Retrieve with SQLite FTS5.
-6. Answer only from returned chunks and include path, start, end, and score.
-7. If there are no matches, return no citations rather than guessing.
+1. Index the corpus first. Indexing is incremental and safe to rerun.
+2. Treat the index as local state under `.local-agent-pack/indexes/rag/`; do not commit it.
+3. Search with the hybrid BM25 plus exact-match query.
+4. Read returned chunks before answering.
+5. Cite `path`, `start`, `end`, heading, and score for every claim.
+6. If there are no matches, return no citations rather than guessing.
+
+Ingestion rules:
+
+- Index UTF-8 text, Markdown, code, JSON, YAML, TOML, HTML, CSS, and SQL files.
+- Skip binaries, ignored/generated directories, oversized files, and secret-like filenames.
+- Markdown chunks preserve heading breadcrumbs.
+- Chunk boundaries follow paragraphs and headings; no text is silently split mid-paragraph by default.
+- The FTS5 trigram tokenizer supports mixed English and Chinese queries.

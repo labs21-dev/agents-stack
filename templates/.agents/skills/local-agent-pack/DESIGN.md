@@ -822,6 +822,23 @@ local-agent-pack/
 - `tesseract`
 - 基本 metadata 讀取
 
+Phase 2 `local-rag` executable scope:
+
+1. `scripts/rag.py index <corpus>`:
+   - corpus manifest: relative path, size, mtime, SHA-256, language, indexedAt
+   - incremental refresh and deletion of removed files
+   - SQLite WAL mode and foreign-key cascading deletes
+   - FTS5 trigram index for mixed English/Chinese retrieval
+   - secret-like filenames and generated directories are excluded
+2. `scripts/rag.py query <question>`:
+   - FTS5 BM25 plus exact substring search
+   - reciprocal-rank fusion
+   - optional path filter
+   - path/offset/heading/score citations
+   - zero-result output is a valid successful retrieval, not a fabricated answer
+3. Vector embeddings and local reranking remain deliberately out of Phase 2.
+   The baseline must prove recall and citation precision before adding another index.
+
 ### Phase 3：Model and cost guardrails
 
 - Model discovery caching
