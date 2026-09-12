@@ -1,0 +1,28 @@
+{
+  "name": "local-agent-pack",
+  "version": "0.1.0",
+  "runtime": "agent-skills-v1",
+  "phase": 1,
+  "provider": "openrouter",
+  "skills": [
+    "generate-image",
+    "generate-video",
+    "read-image",
+    "read-video",
+    "read-audio",
+    "generate-text",
+    "generate-audio",
+    "local-rag",
+    "agent-memory"
+  ],
+  "entrypoints": {
+    "openrouter": "scripts/openrouter.py",
+    "doctor": "scripts/doctor.py"
+  },
+  "defaults": {
+    "storageRoot": ".local-agent-pack",
+    "privacyMode": "local-first",
+    "cloudApproval": "explicit",
+    "apiKeyEnv": "OPENROUTER_API_KEY"
+  }
+}

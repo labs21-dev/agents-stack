@@ -1,0 +1,27 @@
+{
+  "provider": "openrouter",
+  "baseUrl": "https://openrouter.ai/api/v1",
+  "apiKeyEnv": "OPENROUTER_API_KEY",
+  "storageRoot": ".local-agent-pack",
+  "cloudApproval": "explicit",
+  "validateCapabilities": true,
+  "models": {
+    "imageGeneration": "openai/gpt-image-1",
+    "videoGeneration": "google/veo-3.1",
+    "imageUnderstanding": "google/gemini-3-flash-preview",
+    "videoUnderstanding": "google/gemini-2.5-flash",
+    "textGeneration": "openai/gpt-5",
+    "audioTranscription": "openai/whisper-large-v3",
+    "audioAnalysis": "google/gemini-2.5-flash",
+    "audioGeneration": "openai/gpt-4o-mini-tts-2025-12-15"
+  },
+  "video": {
+    "pollIntervalSeconds": 30,
+    "maxWaitSeconds": 1800
+  },
+  "limits": {
+    "imageUploadBytes": 10485760,
+    "videoDirectUploadBytes": 52428800,
+    "audioUploadBytes": 26214400
+  }
+}
