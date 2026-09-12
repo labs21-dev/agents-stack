@@ -730,7 +730,10 @@ Default project-local:
     rag/
       rag.sqlite3
   memory/
-    memory.sqlite
+    working/
+    semantic/
+    episodic/
+    procedural/
 ```
 
 User-global opt-in:

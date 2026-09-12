@@ -214,15 +214,10 @@ A reliable agent does not remember everything. It finds the right information
 at the right time, acts the right way, and knows what to keep, what to update,
 and what must be forgotten.
 
-## Memory search (optional)
+## Memory search
 
-INDEX-first routing is the default. A SQLite FTS index over memory markdown
-files is a derived search cache, not the source of truth.
-
-- Store: `.agents/memory/memory.sqlite`
-- Index source: only the four memory drawers
-- Rebuild when entry files change
-- Never mix project files into this index
+INDEX-first routing is the default. If broader search is needed, use `rg`
+across the four memory drawers; no database is required.
 
 Project files belong to local-rag; memory files belong to agent-memory. Do not
 cross-index between them.
@@ -235,6 +230,6 @@ drawers. If an answer needs both, report them separately.
 
 ## Port
 
-Copy `.agents/skills/agent-memory/SKILL.md` into any repo. No database, no
-vector index, no specific runtime is required. Working entries stay out of
-git; the other three drawers may be committed.
+Copy `.agents/skills/agent-memory/SKILL.md` and the four memory INDEX files
+into any repo. No database, no vector index, no specific runtime is required.
+Working entries stay out of git; the other three drawers may be committed.

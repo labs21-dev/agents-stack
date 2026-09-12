@@ -39,7 +39,6 @@ Selection rules:
   jobs/videos/{jobId}.json
   approvals/{id}.json
   indexes/rag/rag.sqlite3
-  memory/memory.sqlite
   memory/
     working/INDEX.md
     semantic/INDEX.md
@@ -57,7 +56,6 @@ For the default scope, paths look like:
 ./.agents/jobs/videos/{jobId}.json
 ./.agents/approvals/{id}.json
 ./.agents/indexes/rag/rag.sqlite3
-./.agents/memory/memory.sqlite
 ./.agents/memory/working/INDEX.md
 ./.agents/memory/semantic/INDEX.md
 ./.agents/memory/episodic/INDEX.md
