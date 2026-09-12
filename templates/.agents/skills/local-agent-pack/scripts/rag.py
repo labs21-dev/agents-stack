@@ -15,7 +15,7 @@ from typing import Any
 
 
 CONFIG_PATH = pathlib.Path(__file__).resolve().parents[1] / "templates" / "openrouter.config.json"
-DEFAULT_STORAGE_ROOT = ".local-agent-pack"
+DEFAULT_STORAGE_ROOT = ".agents"
 TEXT_EXTENSIONS = {
     ".md", ".markdown", ".txt", ".rst", ".py", ".js", ".ts", ".tsx", ".jsx",
     ".json", ".yaml", ".yml", ".toml", ".ini", ".cfg", ".sh", ".bash", ".zsh",
@@ -24,7 +24,7 @@ TEXT_EXTENSIONS = {
 }
 EXCLUDED_DIRS = {
     ".git", ".hg", ".svn", "node_modules", ".venv", "venv", "__pycache__",
-    ".pytest_cache", ".mypy_cache", ".local-agent-pack", "dist", "build",
+    ".pytest_cache", ".mypy_cache", ".agents", "dist", "build",
 }
 EXCLUDED_NAMES = {".env", ".env.local", ".env.production", "id_rsa", "credentials.json"}
 MAX_FILE_BYTES = 10 * 1024 * 1024
@@ -47,7 +47,10 @@ def load_config(config_path: pathlib.Path | None) -> dict[str, Any]:
 
 def database_path(config_path: pathlib.Path | None, storage_root: pathlib.Path | None) -> pathlib.Path:
     configured = storage_root or load_config(config_path).get("storageRoot", DEFAULT_STORAGE_ROOT)
-    return (pathlib.Path.cwd() / configured / "indexes" / "rag" / "rag.sqlite3").resolve()
+    root = pathlib.Path(configured).expanduser()
+    if not root.is_absolute():
+        root = pathlib.Path.cwd() / root
+    return (root / "indexes" / "rag" / "rag.sqlite3").resolve()
 
 
 def connect(path: pathlib.Path) -> sqlite3.Connection:
@@ -132,7 +135,6 @@ def iter_corpus_files(corpus: pathlib.Path) -> list[pathlib.Path]:
             path = pathlib.Path(current) / name
             files.append(path)
     return [path for path in files if should_index(path)]
-    return files
 
 
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*#*\s*$")

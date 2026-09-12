@@ -23,7 +23,8 @@ scripts/rag.py query "OpenRouter" --path-filter docs/
 Workflow:
 
 1. Index the corpus first. Indexing is incremental and safe to rerun.
-2. Treat the index as local state under `.local-agent-pack/indexes/rag/`; do not commit it.
+2. Treat the index as local state under `.agents/indexes/rag/` by default; do not commit it.
+   Use `--storage-root ~/.agents` only when the index must be shared across projects.
 3. Search with the hybrid BM25 plus exact-match query.
 4. Read returned chunks before answering.
 5. Cite `path`, `start`, `end`, heading, and score for every claim.

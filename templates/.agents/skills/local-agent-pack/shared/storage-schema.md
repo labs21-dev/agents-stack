@@ -1,17 +1,66 @@
 # Storage Schema
 
-## Root
+The pack uses two compatible storage scopes. The default is project-local; the
+global root is opt-in and is intended only for state that should be shared
+across projects.
 
-Default project-local root:
+## Roots
+
+### Project-local (default)
 
 ```text
-.local-agent-pack/
+./.agents/
 ```
+
+### User-global (opt-in)
+
+```text
+~/.agents/
+```
+
+Selection rules:
+
+1. Use the project-local root unless the caller explicitly selects a global
+   root with `--storage-root ~/.agents` or a config override.
+2. `~/.agents/skills/` belongs to installed agent skills and is never managed,
+   overwritten, or pruned by pack runtime state.
+3. Pack runtime state uses the same child directories under either root, except
+   `skills/`, which is reserved for skill installation.
+
+## Runtime layout
+
+```text
+<storage-root>/
+  media/
+    images/
+    videos/
+    audio/
+  artifacts/{YYYYMMDD}/{id}.json
+  jobs/videos/{jobId}.json
+  approvals/{id}.json
+  indexes/rag/rag.sqlite3
+  memory/memory.sqlite
+```
+
+For the default scope, paths look like:
+
+```text
+./.agents/media/images/
+./.agents/media/videos/
+./.agents/media/audio/
+./.agents/artifacts/{YYYYMMDD}/{id}.json
+./.agents/jobs/videos/{jobId}.json
+./.agents/approvals/{id}.json
+./.agents/indexes/rag/rag.sqlite3
+./.agents/memory/memory.sqlite
+```
+
+For the global scope, replace `./.agents/` with `~/.agents/`.
 
 ## Artifact JSON
 
 ```text
-.local-agent-pack/artifacts/{YYYYMMDD}/{id}.json
+<storage-root>/artifacts/{YYYYMMDD}/{id}.json
 ```
 
 Required:
@@ -35,7 +84,7 @@ Required:
 ## Video Jobs
 
 ```text
-.local-agent-pack/jobs/videos/{jobId}.json
+<storage-root>/jobs/videos/{jobId}.json
 ```
 
 Required:
@@ -57,7 +106,7 @@ Required:
 ## Approval Records
 
 ```text
-.local-agent-pack/approvals/{id}.json
+<storage-root>/approvals/{id}.json
 ```
 
 Required:
@@ -74,7 +123,7 @@ Required:
 ## RAG Index
 
 ```text
-.local-agent-pack/indexes/rag/rag.sqlite3
+<storage-root>/indexes/rag/rag.sqlite3
 ```
 
 Tables:
@@ -98,4 +147,6 @@ Query output must retain:
 }
 ```
 
-The SQLite database is generated local state and must not be committed.
+The SQLite database is generated local state and must not be committed. An index
+may live in the global scope only when its corpus and citations are safe to
+reuse across projects.

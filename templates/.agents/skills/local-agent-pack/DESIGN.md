@@ -199,7 +199,7 @@ local-agent-pack/
   },
   "defaults": {
     "provider": "openrouter",
-    "storageRoot": ".local-agent-pack",
+    "storageRoot": ".agents",
     "privacyMode": "local-first",
     "cloudApproval": "explicit"
   }
@@ -710,28 +710,51 @@ memory.delete(id) -> DeleteResult
 
 ## 6. Storage layout
 
-預設 project-local：
+Pack runtime artifacts use two compatible roots. The default is
+project-local; the user-global root is opt-in for state that must be shared
+across projects.
+
+Default project-local:
 
 ```text
-.local-agent-pack/
-  state.sqlite
+./.agents/
   media/
     images/
     videos/
     audio/
+  artifacts/
+  jobs/
+    videos/
+  approvals/
   indexes/
     rag/
+      rag.sqlite3
   memory/
     memory.sqlite
-  logs/
-  cache/
 ```
 
-可切換 user-global：
+User-global opt-in:
 
 ```text
-~/.local/share/local-agent-pack/
+~/.agents/
+  skills/           # installed skills, never runtime state
+  media/
+  artifacts/
+  jobs/
+  approvals/
+  indexes/
+  memory/
 ```
+
+Selection rules:
+
+1. `--storage-root ~/.agents` or a config value can select the global scope.
+2. Project-local `.agents` remains the default so generated files stay near
+   the project and are easy to ignore or delete.
+3. `~/.agents/skills/` is reserved for skill installation; runtime must not
+   overwrite or prune it.
+4. Memory and indexes may use global scope only when their content is
+   intentionally cross-project.
 
 ## 7. Privacy & permission
 

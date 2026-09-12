@@ -74,7 +74,8 @@ def load_config(config_path: pathlib.Path | None = None) -> dict[str, Any]:
 
 def storage_root(args: argparse.Namespace, config: dict[str, Any]) -> pathlib.Path:
     configured = args.storage_root or config["storageRoot"]
-    return (pathlib.Path.cwd() / configured).resolve()
+    path = pathlib.Path(configured).expanduser()
+    return path if path.is_absolute() else (pathlib.Path.cwd() / path).resolve()
 
 
 def media_type_for(path: pathlib.Path, allowed: set[str]) -> str:

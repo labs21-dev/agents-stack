@@ -152,7 +152,7 @@ Reference images use `input_references`:
 Normalization:
 
 1. Decode `data[].b64_json`.
-2. Save to `.local-agent-pack/media/images/`.
+2. Save to `.agents/media/images/`.
 3. Infer extension from `media_type`; do not trust the prompt for the file type.
 4. Write metadata with model, provider, request parameters, usage, cost, and generation time.
 5. Validate the image with `sips` or an equivalent decoder.
@@ -240,7 +240,7 @@ GET /api/v1/videos/{jobId}/content?index=0
 The download still requires the OpenRouter Authorization header. Save the response bytes to:
 
 ```text
-.local-agent-pack/media/videos/{jobId}.mp4
+.agents/media/videos/{jobId}.mp4
 ```
 
 Then validate with `ffprobe`:
@@ -435,7 +435,7 @@ POST /api/v1/audio/speech
 The response is raw audio bytes, not JSON. Save directly to:
 
 ```text
-.local-agent-pack/media/audio/{generationId}.mp3
+.agents/media/audio/{generationId}.mp3
 ```
 
 Use the `X-Generation-Id` response header for provenance.
@@ -472,7 +472,7 @@ Every OpenRouter call returns the same internal shape:
 Artifact rules:
 
 - Generated media is downloaded to the local media store.
-- Understanding output is persisted as JSON in `.local-agent-pack/artifacts/`.
+- Understanding output is persisted as JSON in `.agents/artifacts/`.
 - Every artifact records model, endpoint, request parameters, usage, cost, and creation time.
 - API keys and full prompts containing secrets are never persisted.
 

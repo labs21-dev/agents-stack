@@ -21,7 +21,7 @@
     "rag": "scripts/rag.py"
   },
   "defaults": {
-    "storageRoot": ".local-agent-pack",
+    "storageRoot": ".agents",
     "privacyMode": "local-first",
     "cloudApproval": "explicit",
     "apiKeyEnv": "OPENROUTER_API_KEY"

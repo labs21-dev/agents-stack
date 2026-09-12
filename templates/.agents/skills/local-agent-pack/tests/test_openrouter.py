@@ -152,7 +152,7 @@ def test_cloud_upload_is_declined_without_approval(tmp_path, monkeypatch):
 
     assert result["status"] == "declined"
     assert "cloud approval" in result["output"]["reason"]
-    assert not list((tmp_path / ".local-agent-pack" / "approvals").glob("*.json"))
+    assert not list((tmp_path / ".agents" / "approvals").glob("*.json"))
 
 
 def test_image_read_builds_vision_chat_request(tmp_path, monkeypatch):
@@ -236,7 +236,7 @@ def test_video_submit_poll_download_state_machine(tmp_path, monkeypatch):
     )
     submitted = module.video_submit(submit_args, submit_transport)
     assert submitted["status"] == "pending"
-    job_path = tmp_path / ".local-agent-pack" / "jobs" / "videos" / "job_123.json"
+    job_path = tmp_path / ".agents" / "jobs" / "videos" / "job_123.json"
     assert json.loads(job_path.read_text())["status"] == "pending"
     assert len(submit_transport.requests) == 2
     assert submit_transport.requests[1]["body"]["generate_audio"] is True
@@ -464,7 +464,7 @@ def test_gemini_video_read_preserves_reasoning_details(tmp_path, monkeypatch):
 def test_video_download_requires_completed_job(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
     monkeypatch.chdir(tmp_path)
-    job_dir = tmp_path / ".local-agent-pack" / "jobs" / "videos"
+    job_dir = tmp_path / ".agents" / "jobs" / "videos"
     job_dir.mkdir(parents=True)
     (job_dir / "job_pending.json").write_text(json.dumps({"id": "job_pending", "status": "pending", "model": "m"}))
     args = args_for("video-download", job_id="job_pending", index=0)

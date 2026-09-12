@@ -2,7 +2,7 @@
   "provider": "openrouter",
   "baseUrl": "https://openrouter.ai/api/v1",
   "apiKeyEnv": "OPENROUTER_API_KEY",
-  "storageRoot": ".local-agent-pack",
+  "storageRoot": ".agents",
   "cloudApproval": "explicit",
   "validateCapabilities": true,
   "models": {
