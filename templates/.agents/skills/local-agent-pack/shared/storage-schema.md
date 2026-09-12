@@ -40,6 +40,11 @@ Selection rules:
   approvals/{id}.json
   indexes/rag/rag.sqlite3
   memory/memory.sqlite
+  memory/
+    working/INDEX.md
+    semantic/INDEX.md
+    episodic/INDEX.md
+    procedural/INDEX.md
 ```
 
 For the default scope, paths look like:
@@ -53,6 +58,10 @@ For the default scope, paths look like:
 ./.agents/approvals/{id}.json
 ./.agents/indexes/rag/rag.sqlite3
 ./.agents/memory/memory.sqlite
+./.agents/memory/working/INDEX.md
+./.agents/memory/semantic/INDEX.md
+./.agents/memory/episodic/INDEX.md
+./.agents/memory/procedural/INDEX.md
 ```
 
 For the global scope, replace `./.agents/` with `~/.agents/`.
