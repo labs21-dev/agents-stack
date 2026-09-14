@@ -130,7 +130,7 @@ NO-GO 終止只需：觸發紅線、否決理由、降級建議。
 |------|-------|
 | 模糊多鏡頭決策（單一產品/商業方向本質拆解） | `meta-thinking-framework` |
 | 協議競態 / 狀態機合約 | `protocol-adversarial-design` |
-| 信任 AI 生成程式碼 | `agentic-clean-discipline` |
+| 信任 AI 生成程式碼（spec → evidence gates） | `agentic-dev-e2e` |
 | 多邊利害關係人**進入策略**壓測 + 驗證劇本 | **this skill** |
 
 本 skill 的 Phase 1 鏡頭分析與 `meta-thinking-framework` 同源；當決策仍處於「連問題本質都還沒拆清楚」的階段，先跑 `meta-thinking-framework`，產出核心變數後再進入本 skill 的 Phase 0/1。

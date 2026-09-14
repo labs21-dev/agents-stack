@@ -66,7 +66,7 @@
 |------|-------|------|
 | 連問題本質都還沒拆清楚 | `meta-thinking-framework` | **上游**：先跑 meta-thinking 產出核心變數，再進入本 skill Phase 0/1 |
 | 協議競態 / 狀態機合約 | `protocol-adversarial-design` | **旁支**：若本 skill Phase 2 的承重實體狀態機涉及競態合約，可委派 |
-| 信任 AI 生成程式碼 | `agentic-clean-discipline` | **下游**：本 skill 產出方案後若需實作，走 agentic-clean 的 gate 鏈 |
+| 信任 AI 生成程式碼 | `agentic-dev-e2e` | **下游**：本 skill 產出方案後若需實作，走 agentic-dev-e2e 的 gate 鏈 |
 
 本 skill 的 Phase 1 鏡頭分析與 `meta-thinking-framework` 同源（六鏡 + 變數驅動額外鏡頭 + 反事實對比法引入規則）。這是有意的重用，不是重複——本 skill 在鏡頭之上加了時間維度（T+0/6m/12m/24m）與下游的實體/博弈/紅隊層。
 

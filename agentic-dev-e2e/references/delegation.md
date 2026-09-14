@@ -9,7 +9,7 @@ its own artifacts.
 | Situation | Delegate to | What this workflow adopts |
 |---|---|---|
 | Phase B: task has protocol character (concurrency, retries/idempotency, distributed handoff, authz/trust boundary, lifecycle state machine, cancel races) | repo's adversarial/protocol-design skill (e.g. `protocol-adversarial-design`) | its invariants + alignment tests become the spec's backend section and the verify gate's core |
-| Phase 0/Phase C: deciding how much verification a grade deserves | repo's clean-discipline skill (e.g. `agentic-clean-discipline`) | its risk matrix for L1/L2/L3 detail; its gate chain for L2/L3 verify depth |
+| Phase 0/Phase C: deciding how much verification a grade deserves | this skill's `references/risk-gates.md` | L1/L2/L3 failure-cost matrix and verify depth; do not re-implement in a sibling |
 | Phase C: UI-affecting change needs simulator/device evidence | repo's device-interaction skill, or direct simulator tooling | screenshots + hierarchy dumps cited as evidence rows |
 | Phase A: the wish itself is fuzzy at the product level (not just technically vague) | repo's multi-lens analysis skill (e.g. `meta-thinking-framework`) | its output becomes the spec's "Open judgment calls" section |
 | Tests need modernizing to repo-standard test style | repo's test-modernizer skill if present | modernized test cases in the build report mapping |

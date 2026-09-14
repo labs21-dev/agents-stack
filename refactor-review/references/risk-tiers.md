@@ -51,4 +51,4 @@ Grade by **blast radius × reversibility × invariant touch**. Specialization
 ## Confidence
 
 State `tier_confidence: high | medium | low`. If low, bias **up** one tier
-when failure cost is high (same spirit as agentic-clean-discipline grade reopen).
+when failure cost is high (same spirit as agentic-dev-e2e grade reopen).

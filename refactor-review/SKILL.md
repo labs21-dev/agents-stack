@@ -10,7 +10,7 @@ description: >-
   a refactor review with on-demand domain specialization. Method: load fixed
   kernel → caller (or this agent) fills a specialization card → lint the card
   → risk-tier L1/L2/L3 → structured review. Do NOT use for line-by-line code
-  review of a small patch (use normal review / agentic-clean-discipline), pure
+  review of a small patch (use normal review), pure
   product strategy (meta-thinking-framework), or protocol race contracts
   (protocol-adversarial-design).
 ---
@@ -39,7 +39,7 @@ See frontmatter. Sibling split:
 |------|--------|
 | Fuzzy multi-lens decision | `meta-thinking-framework` |
 | Dangerous protocol contract + explore | `protocol-adversarial-design` |
-| Trust AI-generated *code* via gates | `agentic-clean-discipline` |
+| Trust AI-generated *code* via spec → evidence gates | `agentic-dev-e2e` |
 | Review AI *refactor / architecture* proposal | **this skill** |
 
 ## Hard rules

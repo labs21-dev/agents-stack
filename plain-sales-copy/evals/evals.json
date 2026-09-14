@@ -1,0 +1,66 @@
+{
+  "skill_name": "plain-sales-copy",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Rewrite this homepage hero for our analytics SaaS. Keep the energy:\n\n\"We are a leading AI-driven big-data analytics company. We provide a revolutionary end-to-end solution that uses powerful patented algorithms to give enterprises extremely smooth and comprehensive digital-transformation enablement, substantially lifting operational synergy.\"\n\nAudience is ops directors at 50-200 person manufacturers. They currently export three CSVs from SAP every Friday and spend ~6 hours reconciling them in Excel. A plant in Taichung cut that to 20 minutes after they connected our exporter to their SAP tables. Don't invent extra product.",
+      "expected_output": "A 3-5 sentence unit: Friday CSV pain, hours/cost, mechanism (connect exporter to SAP tables) + 6h→20min result with the Taichung plant, micro CTA. No puff adjectives.",
+      "files": [],
+      "expectations": [
+        "Core unit is 3-5 sentences",
+        "Contains none of: leading, revolutionary, powerful, seamless, end-to-end, digital transformation, synergy, AI-driven",
+        "Names the Friday CSV / Excel work as the status quo",
+        "Includes the Taichung 6 hours → 20 minutes result",
+        "CTA is a micro-commitment, not a 1-hour demo or contract",
+        "you/your (or role names) outnumber we/our/I"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "cold email to chain-restaurant COOs. product: roster+payroll app that talks to POS and LINE. proof: last month a named 12-store group saved NT$20k management cost per store after going live. I want them on a call this week.",
+      "expected_output": "Email whose body is one 4-element unit. The CTA must not be 'jump on a call this week'; it should be a 2-minute artifact or similar. 店長/40 hours or equivalent pain is acceptable if derived and labeled as assumption.",
+      "files": [],
+      "expectations": [
+        "Body of the email is 3-5 sentences (greeting/signoff excluded)",
+        "CTA is not a meeting, demo hour, or calendar link as the first ask",
+        "Includes a named-or-numbered proof (12-store group, NT$20k/store)",
+        "Mechanism is visible (POS, LINE, tap) not 'AI-powered workforce OS'",
+        "No puff adjectives from the banned list"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Write the full homepage for our AI-native operating system for the future of work. Make it inspiring. Lots of adjectives is our brand.",
+      "expected_output": "Either a lint-passing hero unit that replaces 'future of work' with a concrete pain (must ask or assume a real job-to-be-done) OR a stop that refuses adjective-as-brand and asks for the buyer's actual Friday work. Must not ship a vision paragraph full of puff.",
+      "files": [],
+      "expectations": [
+        "Does not ship a hero whose purpose is inspiration-via-adjectives",
+        "Either stops for missing facts (audience, Friday work, number) or writes a 4-element unit",
+        "Does not honor 'lots of adjectives is our brand' as a waiver of the puff ban"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I want to figure out what product to build for restaurant owners. Can you write the pitch first so we can test it?",
+      "expected_output": "Stop. Route to interview-to-build. No invented pitch on a missing product.",
+      "files": [],
+      "expectations": [
+        "Does not draft a 4-element sales unit as the main deliverable",
+        "Names interview-to-build (or equivalent discovery) as the next skill",
+        "States that a pitch on an undefined product is out of scope"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Deck opener + 8 more slides for investors. Product: we help retailers raise inventory turns 20% in 3 days by replacing the weekly cycle count with a shelf-camera delta. Proof: 4 stores in 2026-08. They asked for 'vision, team, market size' after slide 1.",
+      "expected_output": "Slide 1 is a 4-element unit (pain, cost, 20% in 3 days, micro CTA). Later slides may cover team/market as later units still linted — no puff, no second pitch. Vision slide is not slide 1.",
+      "files": [],
+      "expectations": [
+        "First unit / slide 1 is 3-5 sentences and contains the 20% / 3-day number",
+        "Slide 1 is not a vision or team slide",
+        "Puff ban still applies on later slides",
+        "Does not put market-size adjectives ('huge', 'untapped') in place of numbers"
+      ]
+    }
+  ]
+}

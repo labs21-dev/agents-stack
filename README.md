@@ -3,30 +3,84 @@
 A collection of composable agent skills, built for local-first execution and
 portable deployment.
 
-## Skills
+Each directory is a standalone skill with its own `SKILL.md` protocol. Most
+skills can be copied into any repo independently. Directories stay at the repo
+root on purpose — grouping is by job, not by extra path depth.
 
-Each directory is a standalone skill with its own `SKILL.md` protocol.
-Most skills can be copied into any repo independently.
+## Pick a skill
+
+| If you need | Use |
+|---|---|
+| Fuzzy product / business / architecture decision | `meta-thinking-framework` |
+| "What will happen?" probability or a calibrated refusal | `epistemic-boundary-oracle` |
+| Multi-party entry strategy with playbooks | `structural-decision-stress-test` |
+| What product to build (discovery, not implementation) | `interview-to-build` |
+| High-risk protocol races / state machines | `protocol-adversarial-design` |
+| System prompt that keeps ignoring rules | `system-prompt-sop` |
+| UI / image / video generation without a design spec | `design-context` |
+| Pitch, cold email, landing copy, deck opener, value prop | `plain-sales-copy` |
+| Feature or bugfix through spec → code → evidence | `agentic-dev-e2e` |
+| Review an AI refactor / architecture proposal | `refactor-review` |
+| Create or eval a new skill | `skill-creator` |
+| Graduate or deprecate a rule from real usage | `skill-evolution` |
+| Turn HITL corrections into a versioned workflow | `feedback2workflow` |
+| Learn a domain to ~80% practitioner | `learn-anything-about-x` |
+| Local generate / read / RAG / memory | `local-agent-pack/` |
+
+Upstream of implementation: decide, then specify, then build. `epistemic-boundary-oracle`
+routes uncalibratable futures to `structural-decision-stress-test`. `skill-creator`
+owns short-cycle skill drafts; `skill-evolution` owns long-cycle case-driven change.
+
+## Decide
+
+High-stakes thinking before anyone writes code.
+
+| Skill | Purpose |
+|---|---|
+| `meta-thinking-framework` | Six-lens analysis for complex, irreversible decisions |
+| `epistemic-boundary-oracle` | Prediction routing with domain-class boundaries |
+| `structural-decision-stress-test` | Multi-agent stress test for entry strategy |
+| `interview-to-build` | Map builder intuition onto a grounded discovery process |
+
+## Specify
+
+Turn a decision into a checkable contract.
+
+| Skill | Purpose |
+|---|---|
+| `protocol-adversarial-design` | Design-time contracts for high-risk protocols |
+| `system-prompt-sop` | Route each prompt constraint to its enforcement layer |
+| `design-context` | Design-context gate before frontend or visual generation |
+| `plain-sales-copy` | 3-5 sentence sales/business copy: no puff, four elements, "tell me more" |
+
+## Build
+
+Execute and review work in a repo.
 
 | Skill | Purpose |
 |---|---|
 | `agentic-dev-e2e` | End-to-end feature development and bug-fix workflow |
-| `design-context` | Design context gating before frontend or visual generation |
-| `epistemic-boundary-oracle` | Prediction routing with domain-class boundaries |
-| `feedback2workflow` | Turn human corrections into versioned workflow learning |
-| `interview-to-build` | Map builder intuition to a grounded discovery process |
-| `learn-anything-about-x` | Adaptive domain mentor for structured learning |
-| `meta-thinking-framework` | Six-lens deep analysis for complex decisions |
-| `protocol-adversarial-design` | Design-time contracts for high-risk protocols |
 | `refactor-review` | Structured review of AI-proposed refactors |
-| `skill-creator` | Create and evaluate agent skills |
-| `skill-evolution` | Evolve skills from real usage evidence |
-| `structural-decision-stress-test` | Multi-agent stress test for entry strategy |
-| `system-prompt-sop` | Design-time SOP for system prompt constraint routing |
+
+## Meta
+
+Skills that create, evolve, or extract other skills and workflows.
+
+| Skill | Purpose |
+|---|---|
+| `skill-creator` | Create and evaluate agent skills (L0 generation, L1 evals) |
+| `skill-evolution` | Evolve skills from real usage evidence (L2 + L3) |
+| `feedback2workflow` | Turn human corrections into versioned workflow learning |
+
+## Learn
+
+| Skill | Purpose |
+|---|---|
+| `learn-anything-about-x` | Adaptive domain mentor for structured learning |
 
 ## Local Agent Pack
 
-`local-agent-pack/` bundles nine capabilities for local agents:
+`local-agent-pack/` bundles nine runtime capabilities for local agents:
 
 | Skill | Purpose |
 |---|---|
@@ -66,6 +120,12 @@ To install a single skill, copy just its directory:
 
 ```bash
 cp -R local-agent-pack/agent-memory ./.agents/skills/agent-memory
+```
+
+To install a protocol skill from the repo root:
+
+```bash
+cp -R meta-thinking-framework ./.agents/skills/meta-thinking-framework
 ```
 
 To install the memory drawer templates:
