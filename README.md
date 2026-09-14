@@ -19,6 +19,7 @@ root on purpose — grouping is by job, not by extra path depth.
 | System prompt that keeps ignoring rules | `system-prompt-sop` |
 | UI / image / video generation without a design spec | `design-context` |
 | Pitch, cold email, landing copy, deck opener, value prop | `plain-sales-copy` |
+| Campaign / multimedia from a marketing-director brief | `marketing-director` |
 | Feature or bugfix through spec → code → evidence | `agentic-dev-e2e` |
 | Review an AI refactor / architecture proposal | `refactor-review` |
 | Create or eval a new skill | `skill-creator` |
@@ -52,6 +53,7 @@ Turn a decision into a checkable contract.
 | `system-prompt-sop` | Route each prompt constraint to its enforcement layer |
 | `design-context` | Design-context gate before frontend or visual generation |
 | `plain-sales-copy` | 3-5 sentence sales/business copy: no puff, four elements, "tell me more" |
+| `marketing-director` | Five-dimension brief, then multimedia with one job per asset |
 
 ## Build
 

@@ -1,0 +1,66 @@
+{
+  "skill_name": "marketing-director",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We need a viral brand film about the future of work and to become a lifestyle / 信仰品牌 this quarter. Product is a 4-month-old roster+payroll app (POS + LINE, one tap). Proof: a 12-store group saved NT$20k/store last month. Make it inspiring, lots of adjectives, Nike/Harley energy.",
+      "expected_output": "A director brief that refuses level 4 and the film-as-first-asset. Diagnoses level 1–2, target ≤2. Soul is 店長 + a named unsaid want, not a manifesto. Media plan starts from Sunday-night spreadsheet scene, not a 90s manifesto. Copy still has no puff. Society-meaning omitted.",
+      "files": [],
+      "expectations": [
+        "Does not set target_level to 4",
+        "Does not treat Nike/Harley as a moodboard to copy this quarter",
+        "Does not waive puff adjectives because 'this is branding'",
+        "Names a concrete friction (roster/payroll/spreadsheet) and the NT$20k delivery",
+        "for_society is omit or equivalent",
+        "Assets have one job each; no all-jobs brand film as the only deliverable"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "行銷總監角度幫我出一季多媒體：IG、30秒、落地頁。產品：連鎖餐廳排班算薪，串 POS 跟員工 LINE，一鍵 5 秒。受眾店長，現況每月手排 40 小時。先不要寫程式。",
+      "expected_output": "Full campaign brief + media plan: mindshare object, clarity screen-recording, action landing with micro-CTA. Each asset one job. Verbal units would pass plain-sales-copy. No 文明演進.",
+      "files": [],
+      "expectations": [
+        "Produces a five-dimension brief, not only a list of posts",
+        "Media plan includes at least one mindshare, one clarity, one action asset",
+        "No asset listed with two loop jobs",
+        "Clarity asset is mechanism-visible (POS/LINE/tap), not a mood film",
+        "Action is a micro-commitment, not 'book a 1-hour demo'",
+        "Does not fill for_society with a social-progress theme"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Rewrite this cold email so it's 3-5 sentences and has no adjectives. Audience is restaurant COOs.",
+      "expected_output": "Do not run the director brief as the main deliverable. Route to plain-sales-copy.",
+      "files": [],
+      "expectations": [
+        "Does not produce a campaign media plan as the main output",
+        "Names plain-sales-copy (or writes a single linted unit instead of a five-dimension brief)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Give me 30 TikToks this month for our SAP-to-Excel exporter. Ops directors, they spend 6 hours every Friday on three CSVs. Taichung plant is at 20 minutes. KPI: likes and a design award.",
+      "expected_output": "Refuse likes/awards as the scoreboard. Size down from 30 posts to a small job mix around the Friday CSV scene. Effective loop uses the 6h→20min delivery. Pull path named.",
+      "files": [],
+      "expectations": [
+        "Rejects likes and design awards as the definition of effective",
+        "Does not ship 30 unique pitches; reuses a small set of jobs",
+        "Mindshare scene is Friday CSV / Excel, not 'digital transformation'",
+        "delivery_check uses the Taichung 20-minute result or stops if it cannot"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I don't know what product to build for restaurant owners yet. Please plan the brand campaign and content house first so we can market it into existence.",
+      "expected_output": "Stop. Missing carrier. Route to interview-to-build. Do not invent a campaign on a missing product.",
+      "files": [],
+      "expectations": [
+        "Does not draft a media plan as the main deliverable",
+        "States the product/carrier is missing",
+        "Names interview-to-build or equivalent discovery as next"
+      ]
+    }
+  ]
+}

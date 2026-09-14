@@ -10,7 +10,8 @@ description: >-
   do we actually say". Also use when existing copy is full of 領先 / 革命性 /
   powerful / seamless / end-to-end. Do NOT use for product discovery
   (interview-to-build), fuzzy strategy (meta-thinking-framework), visual
-  generation (design-context), legal contracts, API/docs, or brand poetry
+  generation (design-context), campaign/multimedia direction
+  (marketing-director), legal contracts, API/docs, or brand poetry
   where adjectives are the product. Method: size the surface → extract facts
   → draft a 4-element unit → lint → stop at "tell me more".
 ---
@@ -70,6 +71,7 @@ that?" or "how much?" has succeeded.
 | What product to build (discovery) | `interview-to-build` |
 | Fuzzy strategy / irreversible decision | `meta-thinking-framework` |
 | UI / image / video generation | `design-context` |
+| Campaign / multimedia from a marketing-director brief | `marketing-director` |
 | The words that sell or explain value | **this skill** |
 
 If the product, audience, or result number does not exist yet, stop and say so.
