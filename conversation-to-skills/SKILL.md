@@ -1,23 +1,23 @@
 ---
-name: feedback-to-workflow-learning
+name: conversation-to-skills
 description: >
-  從 Human-in-the-Loop 長對話中的人類糾偏（Correction）學習，歸納、驗證並版本化沉澱為可執行工作流/方法論；
-  同時判定新反饋是執行偏差還是方法缺口，決定是否更新原工作流。
+  從 Human-in-the-Loop 長對話中的人類糾偏（Correction）學習，歸納、驗證並版本化沉澱為可執行 skill；
+  同時判定新反饋是執行偏差還是方法缺口，決定是否更新原 skill。
 ---
 
-# Skill: Feedback-to-Workflow Learning (F2W)
+# Skill: Conversation-to-Skills (C2S)
 
 ## One-liner
 
-從 Human-in-the-Loop 長對話中的人類糾偏（Correction）學習，歸納、驗證並**版本化**沉澱為可執行工作流/方法論；同時判定新反饋是執行偏差還是方法缺口，決定是否更新原工作流。
+從 Human-in-the-Loop 長對話中的人類糾偏（Correction）學習，歸納、驗證並**版本化**沉澱為可執行 skill；同時判定新反饋是執行偏差還是方法缺口，決定是否更新原 skill。
 
 ---
 
 ## When to use
 
 - 存在較長 Agent 軌跡，且人類在中途多次糾正、補約束、改方向或給價值判斷
-- 目標是把「這次好不容易做對」變成「可複用工作流 / SOP / playbook」
-- 已有工作流 vN，需要根據新反饋決定 **是否升級** 及 **如何升級**
+- 目標是把「這次好不容易做對」變成「可複用 skill / SOP / playbook」
+- 已有 skill vN，需要根據新反饋決定 **是否升級** 及 **如何升級**
 - 需要從反饋過程提取可遷移的 correction skills、規則、門禁與階段方法
 - 需要可審計產物：證據鏈、diff、版本決策，而不只是一段總結散文
 
@@ -460,7 +460,7 @@ Confidence:
 | A/B 難辨 | 並行給出兩套處置，請人類點頭 |
 | 高嚴重性但樣本=1 | 可 Patch/臨時硬約束，標註 「provisional」 |
 | 與法定/安全流程衝突 | **停止演化主流程**；僅建議執行層遵從官方流程 |
-| 用戶只要答案不要方法 | 交付任務結果；F2W 產物改為 optional brief |
+| 用戶只要答案不要方法 | 交付任務結果；C2S 產物改為 optional brief |
 | 多利益相關方優先級衝突 | 升級給人類決策，不擅自選價值 |
 
 ---

@@ -12,24 +12,19 @@ root on purpose — grouping is by job, not by extra path depth.
 | If you need | Use |
 |---|---|
 | Fuzzy product / business / architecture decision | `meta-thinking-framework` |
-| "What will happen?" probability or a calibrated refusal | `epistemic-boundary-oracle` |
-| Multi-party entry strategy with playbooks | `structural-decision-stress-test` |
 | What product to build (discovery, not implementation) | `interview-to-build` |
-| High-risk protocol races / state machines | `protocol-adversarial-design` |
 | System prompt that keeps ignoring rules | `system-prompt-sop` |
 | UI / image / video generation without a design spec | `design-context` |
 | Pitch, cold email, landing copy, deck opener, value prop | `plain-sales-copy` |
 | Campaign / multimedia from a marketing-director brief | `marketing-director` |
 | Feature or bugfix through spec → code → evidence | `agentic-dev-e2e` |
-| Review an AI refactor / architecture proposal | `refactor-review` |
 | Create or eval a new skill | `skill-creator` |
 | Graduate or deprecate a rule from real usage | `skill-evolution` |
-| Turn HITL corrections into a versioned workflow | `feedback2workflow` |
+| Turn HITL corrections into a versioned skill | `conversation-to-skills` |
 | Learn a domain to ~80% practitioner | `learn-anything-about-x` |
 | Local generate / read / memory | `agent-plugin/` |
 
-Upstream of implementation: decide, then specify, then build. `epistemic-boundary-oracle`
-routes uncalibratable futures to `structural-decision-stress-test`. `skill-creator`
+Upstream of implementation: decide, then specify, then build. `skill-creator`
 owns short-cycle skill drafts; `skill-evolution` owns long-cycle case-driven change.
 
 ## Decide
@@ -39,8 +34,6 @@ High-stakes thinking before anyone writes code.
 | Skill | Purpose |
 |---|---|
 | `meta-thinking-framework` | Six-lens analysis for complex, irreversible decisions |
-| `epistemic-boundary-oracle` | Prediction routing with domain-class boundaries |
-| `structural-decision-stress-test` | Multi-agent stress test for entry strategy |
 | `interview-to-build` | Map builder intuition onto a grounded discovery process |
 
 ## Specify
@@ -49,7 +42,6 @@ Turn a decision into a checkable contract.
 
 | Skill | Purpose |
 |---|---|
-| `protocol-adversarial-design` | Design-time contracts for high-risk protocols |
 | `system-prompt-sop` | Route each prompt constraint to its enforcement layer |
 | `design-context` | Design-context gate before frontend or visual generation |
 | `plain-sales-copy` | 3-5 sentence sales/business copy: no puff, four elements, "tell me more" |
@@ -62,7 +54,6 @@ Execute and review work in a repo.
 | Skill | Purpose |
 |---|---|
 | `agentic-dev-e2e` | End-to-end feature development and bug-fix workflow |
-| `refactor-review` | Structured review of AI-proposed refactors |
 
 ## Meta
 
@@ -72,7 +63,7 @@ Skills that create, evolve, or extract other skills and workflows.
 |---|---|
 | `skill-creator` | Create and evaluate agent skills (L0 generation, L1 evals) |
 | `skill-evolution` | Evolve skills from real usage evidence (L2 + L3) |
-| `feedback2workflow` | Turn human corrections into versioned workflow learning |
+| `conversation-to-skills` | Turn human corrections into versioned skills |
 
 ## Learn
 
