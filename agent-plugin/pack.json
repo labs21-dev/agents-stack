@@ -1,5 +1,5 @@
 {
-  "name": "local-agent-pack",
+  "name": "agent-plugin",
   "version": "0.1.0",
   "runtime": "agent-skills-v1",
   "phase": 2,
@@ -12,13 +12,11 @@
     "read-audio",
     "generate-text",
     "generate-audio",
-    "local-rag",
     "agent-memory"
   ],
   "entrypoints": {
     "openrouter": "scripts/openrouter.py",
-    "doctor": "scripts/doctor.py",
-    "rag": "scripts/rag.py"
+    "doctor": "scripts/doctor.py"
   },
   "defaults": {
     "storageRoot": ".agents",

@@ -426,7 +426,7 @@ POST /api/v1/audio/speech
 ```json
 {
   "model": "openai/gpt-4o-mini-tts-2025-12-15",
-  "input": "Hello from local-agent-pack.",
+  "input": "Hello from agent-plugin.",
   "voice": "alloy",
   "response_format": "mp3"
 }

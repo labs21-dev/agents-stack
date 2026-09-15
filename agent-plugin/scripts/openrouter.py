@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Zero-dependency OpenRouter adapter for local-agent-pack Phase 1."""
+"""Zero-dependency OpenRouter adapter for agent-plugin Phase 1."""
 
 from __future__ import annotations
 
@@ -106,7 +106,7 @@ def require_cloud_approval(
     root: pathlib.Path,
     uploaded_path: pathlib.Path | None,
 ) -> dict[str, Any] | None:
-    if os.environ.get("LOCAL_AGENT_PACK_ALLOW_CLOUD") != "1":
+    if os.environ.get("AGENT_PLUGIN_ALLOW_CLOUD") != "1":
         return None
 
     record: dict[str, Any] = {
@@ -559,7 +559,7 @@ def image_generate(args: argparse.Namespace, transport) -> dict[str, Any]:
         pathlib.Path(args.reference[0]) if args.reference else None,
     )
     if approval is None:
-        return declined("/images", model, "cloud approval is required; set LOCAL_AGENT_PACK_ALLOW_CLOUD=1")
+        return declined("/images", model, "cloud approval is required; set AGENT_PLUGIN_ALLOW_CLOUD=1")
 
     payload: dict[str, Any] = {"model": model, "prompt": args.prompt}
     optional = {
@@ -641,7 +641,7 @@ def video_submit(args: argparse.Namespace, transport) -> dict[str, Any]:
     model = model_for(config, "videoGeneration", args.model)
     approval = require_cloud_approval(args, config, root, None)
     if approval is None:
-        return declined("/videos", model, "cloud approval is required; set LOCAL_AGENT_PACK_ALLOW_CLOUD=1")
+        return declined("/videos", model, "cloud approval is required; set AGENT_PLUGIN_ALLOW_CLOUD=1")
 
     payload: dict[str, Any] = {
         "model": model,
@@ -1071,7 +1071,7 @@ def text_generate(args: argparse.Namespace, transport) -> dict[str, Any]:
     model = model_for(config, "textGeneration", args.model)
     approval = require_cloud_approval(args, config, root, None)
     if approval is None:
-        return declined("/chat/completions", model, "cloud approval is required; set LOCAL_AGENT_PACK_ALLOW_CLOUD=1")
+        return declined("/chat/completions", model, "cloud approval is required; set AGENT_PLUGIN_ALLOW_CLOUD=1")
     api_key = api_key_from(config)
     if config.get("validateCapabilities", True):
         validate_modality(
@@ -1123,7 +1123,7 @@ def audio_generate(args: argparse.Namespace, transport) -> dict[str, Any]:
     model = model_for(config, "audioGeneration", args.model)
     approval = require_cloud_approval(args, config, root, None)
     if approval is None:
-        return declined("/audio/speech", model, "cloud approval is required; set LOCAL_AGENT_PACK_ALLOW_CLOUD=1")
+        return declined("/audio/speech", model, "cloud approval is required; set AGENT_PLUGIN_ALLOW_CLOUD=1")
     api_key = api_key_from(config)
     if config.get("validateCapabilities", True):
         validate_modality(

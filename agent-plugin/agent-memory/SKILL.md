@@ -219,14 +219,9 @@ and what must be forgotten.
 INDEX-first routing is the default. If broader search is needed, use `rg`
 across the four memory drawers; no database is required.
 
-Project files belong to local-rag; memory files belong to agent-memory. Do not
-cross-index between them.
-
-## Trust boundary with local-rag
-
-Memory files are agent recollection, not project truth. They must not enter
-the RAG index. Conversely, RAG citations point to project files, not memory
-drawers. If an answer needs both, report them separately.
+Project files are searched with repo tools (`rg`, the editor). Memory files
+belong to agent-memory. Do not copy project documents into the drawers, and
+do not treat drawer files as project source.
 
 ## Port
 

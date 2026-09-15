@@ -11,7 +11,7 @@ import pytest
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "openrouter.py"
 CONFIG = Path(__file__).resolve().parents[1] / "templates" / "openrouter.config.json"
-spec = importlib.util.spec_from_file_location("local_agent_pack_openrouter", SCRIPT)
+spec = importlib.util.spec_from_file_location("agent_plugin_openrouter", SCRIPT)
 module = importlib.util.module_from_spec(spec)
 assert spec.loader is not None
 sys.modules[spec.name] = module
@@ -76,7 +76,7 @@ def model_payload(records):
 
 def test_image_generate_saves_artifact_and_provenance(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
-    monkeypatch.setenv("LOCAL_AGENT_PACK_ALLOW_CLOUD", "1")
+    monkeypatch.setenv("AGENT_PLUGIN_ALLOW_CLOUD", "1")
     monkeypatch.chdir(tmp_path)
     image_data = base64.b64encode(b"fake-png").decode()
     transport = FakeTransport(
@@ -144,7 +144,7 @@ def test_image_generate_saves_artifact_and_provenance(tmp_path, monkeypatch):
 
 def test_cloud_upload_is_declined_without_approval(tmp_path, monkeypatch):
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
-    monkeypatch.delenv("LOCAL_AGENT_PACK_ALLOW_CLOUD", raising=False)
+    monkeypatch.delenv("AGENT_PLUGIN_ALLOW_CLOUD", raising=False)
     monkeypatch.chdir(tmp_path)
     image = write_image(tmp_path / "input.png")
     args = args_for("image-read", path=image, question="What is this?", model=None)
@@ -157,7 +157,7 @@ def test_cloud_upload_is_declined_without_approval(tmp_path, monkeypatch):
 
 def test_image_read_builds_vision_chat_request(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
-    monkeypatch.setenv("LOCAL_AGENT_PACK_ALLOW_CLOUD", "1")
+    monkeypatch.setenv("AGENT_PLUGIN_ALLOW_CLOUD", "1")
     monkeypatch.chdir(tmp_path)
     image = write_image(tmp_path / "input.png", b"png-data")
     transport = FakeTransport(
@@ -199,7 +199,7 @@ def test_image_read_builds_vision_chat_request(tmp_path, monkeypatch):
 
 def test_video_submit_poll_download_state_machine(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
-    monkeypatch.setenv("LOCAL_AGENT_PACK_ALLOW_CLOUD", "1")
+    monkeypatch.setenv("AGENT_PLUGIN_ALLOW_CLOUD", "1")
     monkeypatch.chdir(tmp_path)
 
     submit_transport = FakeTransport(
@@ -268,7 +268,7 @@ def test_video_submit_poll_download_state_machine(tmp_path, monkeypatch):
 
 def test_audio_transcription_uses_verbose_json(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
-    monkeypatch.setenv("LOCAL_AGENT_PACK_ALLOW_CLOUD", "1")
+    monkeypatch.setenv("AGENT_PLUGIN_ALLOW_CLOUD", "1")
     monkeypatch.chdir(tmp_path)
     audio = write_media(tmp_path / "meeting.mp3", b"audio-bytes", ".mp3")
     transport = FakeTransport(
@@ -309,7 +309,7 @@ def test_audio_transcription_uses_verbose_json(tmp_path, monkeypatch):
 
 def test_text_generate_saves_answer_and_usage(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
-    monkeypatch.setenv("LOCAL_AGENT_PACK_ALLOW_CLOUD", "1")
+    monkeypatch.setenv("AGENT_PLUGIN_ALLOW_CLOUD", "1")
     monkeypatch.chdir(tmp_path)
     config = json.loads(CONFIG.read_text())
     config["validateCapabilities"] = False
@@ -347,7 +347,7 @@ def test_text_generate_saves_answer_and_usage(tmp_path, monkeypatch):
 
 def test_audio_generate_saves_raw_audio(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
-    monkeypatch.setenv("LOCAL_AGENT_PACK_ALLOW_CLOUD", "1")
+    monkeypatch.setenv("AGENT_PLUGIN_ALLOW_CLOUD", "1")
     monkeypatch.chdir(tmp_path)
     config = json.loads(CONFIG.read_text())
     config["validateCapabilities"] = False
@@ -363,7 +363,7 @@ def test_audio_generate_saves_raw_audio(tmp_path, monkeypatch):
     )
     args = args_for(
         "audio-generate",
-        input="Hello from local-agent-pack.",
+        input="Hello from agent-plugin.",
         model=None,
         voice="alloy",
         response_format="mp3",
@@ -382,7 +382,7 @@ def test_audio_generate_saves_raw_audio(tmp_path, monkeypatch):
 
 def test_video_capability_validation_rejects_unsupported_duration(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
-    monkeypatch.setenv("LOCAL_AGENT_PACK_ALLOW_CLOUD", "1")
+    monkeypatch.setenv("AGENT_PLUGIN_ALLOW_CLOUD", "1")
     monkeypatch.chdir(tmp_path)
     model_record = {
         "id": "bytedance/seedance-2.0",
@@ -401,7 +401,7 @@ def test_video_capability_validation_rejects_unsupported_duration(tmp_path, monk
 
 def test_gemini_video_url_requires_youtube(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
-    monkeypatch.setenv("LOCAL_AGENT_PACK_ALLOW_CLOUD", "1")
+    monkeypatch.setenv("AGENT_PLUGIN_ALLOW_CLOUD", "1")
     monkeypatch.chdir(tmp_path)
     config = json.loads(CONFIG.read_text())
     config["validateCapabilities"] = False
@@ -422,7 +422,7 @@ def test_gemini_video_url_requires_youtube(tmp_path, monkeypatch):
 
 def test_gemini_video_read_preserves_reasoning_details(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
-    monkeypatch.setenv("LOCAL_AGENT_PACK_ALLOW_CLOUD", "1")
+    monkeypatch.setenv("AGENT_PLUGIN_ALLOW_CLOUD", "1")
     monkeypatch.chdir(tmp_path)
     config = json.loads(CONFIG.read_text())
     config["validateCapabilities"] = False
@@ -474,7 +474,7 @@ def test_video_download_requires_completed_job(tmp_path, monkeypatch):
 
 def test_upload_size_gate(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
-    monkeypatch.setenv("LOCAL_AGENT_PACK_ALLOW_CLOUD", "1")
+    monkeypatch.setenv("AGENT_PLUGIN_ALLOW_CLOUD", "1")
     monkeypatch.chdir(tmp_path)
     image = write_image(tmp_path / "large.png", b"x" * 11)
     config = json.loads(CONFIG.read_text())
@@ -625,7 +625,7 @@ def test_video_capability_validation_rejects_unsupported_audio():
 
 def test_video_reasoning_file_round_trip(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
-    monkeypatch.setenv("LOCAL_AGENT_PACK_ALLOW_CLOUD", "1")
+    monkeypatch.setenv("AGENT_PLUGIN_ALLOW_CLOUD", "1")
     monkeypatch.chdir(tmp_path)
     config = json.loads(CONFIG.read_text())
     config["validateCapabilities"] = False

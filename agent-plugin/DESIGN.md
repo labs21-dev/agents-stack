@@ -1,4 +1,4 @@
-# Design — local-agent-pack
+# Design — agent-plugin
 
 > 狀態：設計稿 v0.2（2026-09-12），供實作前審閱。
 > 定位：給本地 agent 用的能力型 skills pack，不是單一 mega-skill。
@@ -7,16 +7,15 @@
 
 ### 目標
 
-- 提供九個開箱即用的本地 agent 能力：
+- 提供八個開箱即用的本地 agent 能力：
   1. `generate-image`
   2. `generate-video`
   3. `read-image`
   4. `read-video`
   5. `read-audio`
-  6. `local-rag`
-  7. `agent-memory`
-  8. `generate-text`
-  9. `generate-audio`
+  6. `agent-memory`
+  7. `generate-text`
+  8. `generate-audio`
 - 每個能力都是獨立 skill，可單獨安裝、單獨觸發、單獨升級。
 - 共用一套 runtime adapter 與 storage schema，避免七份重複邏輯。
 - **Phase 1 provider 明確鎖定 OpenRouter**，先完成 image / video / audio endpoint 對接，再開放其他 provider。
@@ -39,7 +38,7 @@
    - storage / provider / policy 共用，避免重複。
 
 2. **Local-first**
-   - 媒體讀取、索引、記憶優先使用本地工具。
+   - 媒體讀取、記憶優先使用本地工具。
    - 只有需要更強生成或理解時，才經 provider adapter 呼叫雲端。
 
 3. **可驗收輸出**
@@ -52,7 +51,7 @@
    - provider 透過 adapter 註冊，未來換模型不改 skill。
 
 5. **可降級**
-   - 若模型不可用，至少回退到 metadata、OCR、ffmpeg、SQLite FTS。
+   - 若模型不可用，至少回退到 metadata、OCR、ffmpeg。
    - 不允許無證據的幻覺輸出。
 
 ## 2. 架構
@@ -63,7 +62,7 @@ User intent
 Skill trigger layer
   generate-image / generate-video
   read-image / read-video / read-audio
-  local-rag / agent-memory
+  agent-memory
     ↓
 Skill workflow layer
   fixed input → fixed steps → fixed output contract
@@ -72,7 +71,7 @@ Capability adapter layer
   provider adapters: local model / cloud model / CLI tools
     ↓
 Storage & state layer
-  media store / rag index / memory store / logs
+  media store / memory store / logs
 ```
 
 ### 2.1 三層分離
@@ -86,7 +85,7 @@ Storage & state layer
    - 每個 provider 實作同一組 contract。
 
 3. **Storage 層**
-   - 統一放置生成物、索引、記憶與 log。
+   - 統一放置生成物、記憶與 log。
    - 支援 project-local 或 user-global 兩種 scope。
 
 ### 2.2 Phase 1 OpenRouter surface
@@ -133,7 +132,7 @@ Phase 1 的本地狀態必須至少保存：
 ## 3. 目錄結構
 
 ```text
-local-agent-pack/
+agent-plugin/
   pack.json
   generate-image/
     SKILL.md
@@ -148,9 +147,6 @@ local-agent-pack/
     SKILL.md
     references/
   read-audio/
-    SKILL.md
-    references/
-  local-rag/
     SKILL.md
     references/
   agent-memory/
@@ -171,14 +167,13 @@ local-agent-pack/
     openrouter.config.json
     provider-config.json
     memory-record.schema.json
-    rag-chunk.schema.json
 ```
 
 ### 3.1 `pack.json` 示意
 
 ```json
 {
-  "name": "local-agent-pack",
+  "name": "agent-plugin",
   "version": "0.1.0",
   "runtime": "agent-skills-v1",
   "skills": [
@@ -187,14 +182,12 @@ local-agent-pack/
     "read-image",
     "read-video",
     "read-audio",
-    "local-rag",
     "agent-memory"
   ],
   "capabilities": {
     "image-generation": ["local", "cloud"],
     "video-generation": ["local", "cloud"],
     "media-understanding": ["local", "cloud"],
-    "retrieval": ["local"],
     "memory": ["local"]
   },
   "defaults": {
@@ -531,69 +524,7 @@ local-agent-pack/
 
 ---
 
-### 4.6 `local-rag`（multimedia retrieval）
-
-#### 觸發
-
-- 「從我的文件裡找答案」
-- 「幫我 index 這個資料夾」
-- 「用本地資料回答」
-- 「這個 repo 裡有沒有講 X」
-
-#### 輸入
-
-| 欄位 | 必填 | 說明 |
-|------|------|------|
-| corpusPath | 是 | 要索引的目錄或檔案 |
-| query | 否 | 檢索問題 |
-| filters | 否 | 副檔名、時間、路徑 |
-| rerank | 否 | 是否 rerank |
-
-#### 流程
-
-1. Ingest by media extractor, not by separate indexes:
-   - Phase 1: text, code, Markdown, PDF/DOCX, image metadata, screenshot OCR, image OCR
-   - Phase 2: audio metadata and transcript chunks
-   - Phase 3: video metadata, keyframe OCR, and transcript chunks
-2. Normalize every source into one universal chunk primitive:
-   - `text`: searchable representation
-   - `locator`: how to return to the original media
-   - `metadata`: extractor, version, capability, confidence
-3. Index:
-   - one SQLite + FTS5 baseline index
-   - optional vector/embedding backend later
-4. Retrieve:
-   - hybrid BM25 + exact-match first
-   - optional rerank/backend later
-   - return source locators, not media-type-specific result formats
-
-#### 輸出
-
-```json
-{
-  "type": "rag-query",
-  "query": "...",
-  "answer": "...",
-  "citations": [
-    {
-      "path": "docs/x.md",
-      "start": 10,
-      "end": 20,
-      "score": 0.87
-    }
-  ]
-}
-```
-
-#### 失敗模式
-
-- 沒有索引 → 先建立，再回答。
-- 檔案格式不支援 → 明說哪些被跳過。
-- 沒有命中 → 回「沒找到」，不硬答。
-
----
-
-### 4.7 `agent-memory`
+### 4.6 `agent-memory`
 
 #### 觸發
 
@@ -658,8 +589,6 @@ video.generate(storyboard, options) -> VideoResult
 image.read(path, question, options) -> ImageReading
 video.read(path, question, options) -> VideoReading
 audio.read(path, question, options) -> AudioReading
-rag.index(corpus, options) -> IndexResult
-rag.query(question, options) -> RagResult
 memory.write(record) -> MemoryId
 memory.read(query, options) -> MemoryList
 memory.update(id, patch) -> MemoryRecord
@@ -684,26 +613,12 @@ memory.delete(id) -> DeleteResult
 }
 ```
 
-#### RAG chunk
-
-```json
-{
-  "id": "chunk_123",
-  "sourcePath": "docs/a.md",
-  "start": 0,
-  "end": 500,
-  "text": "...",
-  "embedding": null,
-  "metadata": {"title": "..."}
-}
-```
-
 ### 5.3 Output contract
 
 每個 skill 的回覆都應包含：
 
 1. **結果摘要**
-2. **檔案路徑或檢索引用**
+2. **檔案路徑**
 3. **使用的 provider**
 4. **限制**
 
@@ -725,9 +640,6 @@ Default project-local:
   jobs/
     videos/
   approvals/
-  indexes/
-    rag/
-      rag.sqlite3
   memory/
     working/
     semantic/
@@ -744,7 +656,6 @@ User-global opt-in:
   artifacts/
   jobs/
   approvals/
-  indexes/
   memory/
 ```
 
@@ -755,7 +666,7 @@ Selection rules:
    the project and are easy to ignore or delete.
 3. `~/.agents/skills/` is reserved for skill installation; runtime must not
    overwrite or prune it.
-4. Memory and indexes may use global scope only when their content is
+4. Memory may use global scope only when its content is
    intentionally cross-project.
 
 ## 7. Privacy & permission
@@ -770,7 +681,6 @@ Selection rules:
 
 3. **Provenance**
    - 所有生成與理解結果都記錄 provider、模型、時間。
-   - RAG 引用必須附 source path。
 
 4. **Retention**
    - Memory 可設定 `expiresAt`。
@@ -783,13 +693,12 @@ Selection rules:
 適合任何支援 `SKILL.md` 的 agent。
 
 ```text
-local-agent-pack/
+agent-plugin/
   generate-image/SKILL.md
   generate-video/SKILL.md
   read-image/SKILL.md
   read-video/SKILL.md
   read-audio/SKILL.md
-  local-rag/SKILL.md
   agent-memory/SKILL.md
 ```
 
@@ -798,7 +707,7 @@ local-agent-pack/
 適合 Codex App：
 
 ```text
-local-agent-pack/
+agent-plugin/
   .codex-plugin/
     plugin.json
   skills/
@@ -807,7 +716,6 @@ local-agent-pack/
     read-image/
     read-video/
     read-audio/
-    local-rag/
     agent-memory/
 ```
 
@@ -816,7 +724,7 @@ local-agent-pack/
 適合支援 MCP 的 agent：
 
 ```text
-local-agent-pack/
+agent-plugin/
   mcp/
     server.py
     tools.json
@@ -841,47 +749,10 @@ local-agent-pack/
 
 ### Phase 2：Local fallback runtime
 
-- SQLite + FTS5
 - `ffmpeg` / `ffprobe`
 - `sips` / `exiftool`
 - `tesseract`
 - 基本 metadata 讀取
-
-Phase 2 `local-rag` executable scope:
-
-1. `scripts/rag.py index <corpus>`:
-   - corpus manifest: relative path, size, mtime, SHA-256, language, indexedAt
-   - incremental refresh and deletion of removed files
-   - SQLite WAL mode and foreign-key cascading deletes
-   - FTS5 trigram index for mixed English/Chinese retrieval
-   - secret-like filenames and generated directories are excluded
-2. `scripts/rag.py query <question>`:
-   - FTS5 BM25 plus exact substring search
-   - reciprocal-rank fusion
-   - optional path filter
-   - path/offset/heading/score citations
-   - zero-result output is a valid successful retrieval, not a fabricated answer
-3. Vector embeddings and local reranking remain deliberately out of Phase 2.
-   The baseline must prove recall and citation precision before adding another index.
-
-Media retrieval phases:
-
-1. Media Phase 1: text, documents, images, and screenshots
-   - retain the existing SQLite FTS5 core
-   - add PDF/DOCX text extraction
-   - add image metadata and optional OCR
-   - add screenshot OCR with bbox/tile locators
-2. Media Phase 2: audio
-   - add `ffprobe` metadata
-   - add transcript chunks when a local ASR extractor is available
-   - never fabricate a transcript; metadata-only indexing is a valid degraded result
-3. Media Phase 3: video
-   - add `ffprobe` metadata
-   - add keyframe extraction and OCR
-   - add audio-track transcript chunks when available
-   - cite timestamps and frame paths
-4. A visual embedding backend such as PixelRAG may be added only after the
-   FTS + locator baseline proves recall and citation precision.
 
 ### Phase 3：Model and cost guardrails
 
@@ -917,22 +788,19 @@ Media retrieval phases:
    - `read-image`：metadata + OCR
    - `read-video`：metadata + 抽幀
    - `read-audio`：metadata only，明確拒絕編造 transcript
-   - `local-rag`：SQLite FTS 查詢
    - `agent-memory`：寫入 / 讀取 / 刪除
 4. 每個 skill 輸出一次固定格式 artifact，並記錄 provider / model / 路徑 / cost。
 
 ## 10. 待驗證假設
 
-1. 七個 skill 是否足以涵蓋主要 local agent 媒體與記憶需求？
+1. 八個 skill 是否足以涵蓋主要 local agent 媒體與記憶需求？
 2. Provider adapter 是否夠穩定，能支援不同 runtime？
-3. Local RAG 是否真的比直接 file search 更有價值？
-4. Memory scope 是否需要更細的分層？
-5. 是否需要把 `read-video` 拆成 `video-summary` / `video-search`？
+3. Memory scope 是否需要更細的分層？
+4. 是否需要把 `read-video` 拆成 `video-summary` / `video-search`？
 
 ## 11. 開放問題
 
 1. Phase 2 之後是否要提供 `ComfyUI` workflow？
-2. 是否需要支援 `LanceDB` / `Chroma` / `sqlite-vec`？
-3. Memory 是否要引入 decay / conflict resolution？
-4. Video generation 是否需要 pre-request cost estimate？
-5. 是否要為每個 skill 建 `evals.json`？
+2. Memory 是否要引入 decay / conflict resolution？
+3. Video generation 是否需要 pre-request cost estimate？
+4. 是否要為每個 skill 建 `evals.json`？

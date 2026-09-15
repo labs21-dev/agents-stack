@@ -35,5 +35,5 @@ that job, not because "we need to be on every platform".
 |---|---|
 | Verbal unit (hook, VO, caption, hero, CTA) | `plain-sales-copy` |
 | Look, type, motion, shot | `design-context` |
-| Raster / video files if the user wants generation | `local-agent-pack` generate-* after the two briefs exist |
+| Raster / video files if the user wants generation | `agent-plugin` generate-* after the two briefs exist |
 | "What should we even sell?" | stop → `interview-to-build` |

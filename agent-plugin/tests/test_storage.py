@@ -12,7 +12,7 @@ CONFIG = Path(__file__).resolve().parents[1] / "templates" / "openrouter.config.
 
 def load_script(name: str):
     script = SCRIPTS / name
-    spec = importlib.util.spec_from_file_location(f"local_agent_pack_{name}", script)
+    spec = importlib.util.spec_from_file_location(f"agent_plugin_{name}", script)
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None
     sys.modules[spec.name] = module
@@ -21,7 +21,6 @@ def load_script(name: str):
 
 
 openrouter = load_script("openrouter.py")
-rag = load_script("rag.py")
 
 
 import pytest
@@ -61,20 +60,3 @@ def test_storage_root_accepts_absolute_override(tmp_path):
     root = openrouter.storage_root(args, {"storageRoot": ".agents"})
 
     assert root == tmp_path / "global-agents"
-
-
-def test_rag_database_defaults_to_project_local_agents(tmp_path, monkeypatch):
-    monkeypatch.chdir(tmp_path)
-
-    database = rag.database_path(None, None)
-
-    assert database == (tmp_path / ".agents" / "indexes" / "rag" / "rag.sqlite3").resolve()
-
-
-def test_rag_database_supports_global_override(tmp_path, monkeypatch, home):
-    monkeypatch.chdir(tmp_path)
-    monkeypatch.setenv("HOME", str(home))
-
-    database = rag.database_path(None, Path("~/.agents"))
-
-    assert database == (home / ".agents" / "indexes" / "rag" / "rag.sqlite3").resolve()
