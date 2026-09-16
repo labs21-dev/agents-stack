@@ -1,7 +1,11 @@
-# Persona Interview
+# Persona Interview Question Bank
 
-Use this as a starting set, not a mandatory questionnaire. Ask one batch,
-reflect the draft back, then drill only into missing or contradictory layers.
+Use this as a reusable question bank, not a mandatory questionnaire. Ask one
+batch, reflect the draft back, then drill only into missing or contradictory
+layers.
+
+Keep this file generic. User answers belong only in that user's persona file;
+do not turn an individual case into a default example or answer key.
 
 ## Batch A: Interaction
 

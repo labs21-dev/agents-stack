@@ -9,7 +9,7 @@ description: >
   and `.agents/memory/personas/{slug}.md`; never invents a persona without
   user-confirmed evidence.
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   category: ["personas", "interview", "memory", "personalization"]
   tags:
     - persona
@@ -37,6 +37,9 @@ known failure modes.
 - INDEX-first: read `INDEX.md`, open only relevant persona files.
 - Evidence-first: every hard clause comes from the user's words or explicit
   confirmation. Mark anything inferred as `derived` and never treat it as hard.
+- Question bank: templates retain reusable questions and field names only.
+  A specific user's answers belong only in that user's persona file; never
+  promote an individual case into the default questionnaire or sample clauses.
 - One layer at a time: do not dump twenty questions. Interview in short batches.
 - Upgrade gate: one correction is a note; repeated correction, explicit
   instruction, or high-severity risk can become a persona clause.
@@ -58,7 +61,7 @@ known failure modes.
 3. Interview by layer. Recommended order:
    1. Interaction protocol: language, structure, directness, fact boundary.
    2. Judgment system: product priority, known failure modes, consensus rule.
-   3. Risk and relevance: one-person constraints, cross-domain analogies,
+   3. Risk and relevance: operating constraints, cross-domain analogies,
       prohibited agent styles.
    4. Persona split: decide whether one persona or role-specific personas are
       clearer.
@@ -145,6 +148,8 @@ Before claiming completion, check:
 - No `derived` clause is phrased as a hard rule.
 - Every conflict has a resolution note.
 - The persona is actionable by a future agent, not just descriptive.
+- The final reply explicitly reports the persona update, its slug, and what
+  changed.
 
 ## References
 

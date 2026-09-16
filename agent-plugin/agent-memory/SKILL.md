@@ -114,6 +114,15 @@ Relay at task end:
   personas.
 - Delete the rest from working. Do not archive the desk as history.
 
+After every memory update, explicitly report:
+
+- Updated drawer and slug
+- What changed
+- Why it passed the write gate
+
+Never leave a memory write silent. If no update was needed, say "no memory
+update" at handoff.
+
 ## CRUD (the protocol lives only here)
 
 INDEX files do not repeat CRUD. An INDEX holds this drawer's duty contract and
