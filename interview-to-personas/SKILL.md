@@ -9,7 +9,7 @@ description: >
   and `.agents/memory/personas/{slug}.md`; never invents a persona without
   user-confirmed evidence.
 metadata:
-  version: "1.1.0"
+  version: "1.2.0"
   category: ["personas", "interview", "memory", "personalization"]
   tags:
     - persona
@@ -102,7 +102,7 @@ Each persona file must stay compact:
 
 - slug: {slug}
 - version: X.Y.Z
-- updated: YYYY-MM-DD
+- last_updated: YYYY-MM-DD
 - status: active | deprecated
 - scope: all sessions | engineering | product | research | ...
 - source: user-interview

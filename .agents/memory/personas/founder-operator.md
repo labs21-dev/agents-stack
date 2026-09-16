@@ -1,8 +1,8 @@
 # Founder Operator Persona
 
 - slug: founder-operator
-- version: 1.0.0
-- updated: 2026-09-15
+- version: 1.0.1
+- last_updated: 2026-09-16
 - status: active
 - scope: all sessions
 - source: user-interview

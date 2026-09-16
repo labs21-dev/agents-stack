@@ -117,6 +117,7 @@ Relay at task end:
 After every memory update, explicitly report:
 
 - Updated drawer and slug
+- `last_updated` date
 - What changed
 - Why it passed the write gate
 
@@ -131,6 +132,9 @@ catalog.
 Path: `.agents/memory/{working,semantic,episodic,procedural,personas}/`
 Entry files: `{slug}.md` (kebab-case, ASCII when possible)
 
+`last_updated` records the file revision date. It does not replace `as_of`
+(semantic fact validity) or `when` (episodic event time).
+
 ### Read
 
 Open that drawer's INDEX, pick 0-N rows for the current task, then read only
@@ -139,12 +143,14 @@ those files.
 ### Create
 
 Pass the gate, choose exactly one drawer, use one entry per file, write the
-catalog row first, then the file.
+catalog row first, then the file. Set `last_updated` to the current local
+date in the catalog row and entry.
 
 ### Update
 
 | Drawer | Rule |
 |---|---|
+| all | Set `last_updated` to the current local date in both the catalog row and entry. |
 | working | Update the same slug in place. If the goal changes, edit the goal. Do not open a parallel desk. |
 | semantic | Revise in place and bump `as_of`. If the old value still matters, keep one `was:` line. |
 | episodic | Do not rewrite history. A new event is a new file. Fix only obvious typos. |
@@ -171,6 +177,7 @@ without a row.
 ```markdown
 # {title}
 
+- last_updated: YYYY-MM-DD
 - goal:
 - constraints:
 - progress:
@@ -183,6 +190,7 @@ without a row.
 ```markdown
 # {title}
 
+- last_updated: YYYY-MM-DD
 - as_of: YYYY-MM-DD
 - source: user-confirmed | verified | derived
 - scope:  # where this applies. omit = this repo
@@ -196,6 +204,7 @@ without a row.
 ```markdown
 # {title}
 
+- last_updated: YYYY-MM-DD
 - when: YYYY-MM-DD
 - task:
 
@@ -210,6 +219,8 @@ already exists, do not create this file. Leave a pointer in the INDEX):
 
 ```markdown
 # {title}
+
+- last_updated: YYYY-MM-DD
 
 When:
 Steps:

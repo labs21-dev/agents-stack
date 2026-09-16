@@ -11,7 +11,7 @@ CRUD lives only in [`../../skills/agent-memory/SKILL.md`](../../skills/agent-mem
 
 ## Catalog
 
-| slug | what is in progress | updated | file |
-|------|---------------------|---------|------|
+| slug | what is in progress | last_updated | file |
+|------|---------------------|--------------|------|
 
 0 entries.
