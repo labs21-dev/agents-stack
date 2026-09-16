@@ -21,6 +21,7 @@ root on purpose — grouping is by job, not by extra path depth.
 | Create or eval a new skill | `skill-creator` |
 | Graduate or deprecate a rule from real usage | `skill-evolution` |
 | Turn HITL corrections into a versioned skill | `conversation-to-skills` |
+| Interview the user and maintain reusable personas | `interview-to-personas` |
 | Learn a domain to ~80% practitioner | `learn-anything-about-x` |
 | Local generate / read / memory | `agent-plugin/` |
 
@@ -64,6 +65,7 @@ Skills that create, evolve, or extract other skills and workflows.
 | `skill-creator` | Create and evaluate agent skills (L0 generation, L1 evals) |
 | `skill-evolution` | Evolve skills from real usage evidence (L2 + L3) |
 | `conversation-to-skills` | Turn human corrections into versioned skills |
+| `interview-to-personas` | Interview users and store reusable collaboration personas |
 
 ## Learn
 
@@ -84,7 +86,7 @@ Skills that create, evolve, or extract other skills and workflows.
 | `read-image` | Answer questions about local images |
 | `read-video` | Answer questions about local or remote video |
 | `read-audio` | Transcribe or analyze local audio |
-| `agent-memory` | Four-duty memory protocol (working / semantic / episodic / procedural) |
+| `agent-memory` | Five-duty memory protocol (working / semantic / episodic / procedural / personas) |
 
 Entry points:
 
@@ -97,6 +99,7 @@ Storage:
 - Global opt-in: `~/.agents/`
 - Generated media, artifacts, and approvals live under the selected root.
 - Agent memory uses markdown drawers under `.agents/memory/`; no database is required.
+- Persona memory uses `.agents/memory/personas/` and follows `interview-to-personas`.
 - `~/.agents/skills/` is reserved for installed skills and is never overwritten by runtime state.
 
 ## Installation
@@ -123,6 +126,12 @@ To install the memory drawer templates:
 
 ```bash
 cp -R agent-plugin/templates/memory ./.agents/memory
+```
+
+To install persona memory support, also copy:
+
+```bash
+cp -R interview-to-personas ./.agents/skills/interview-to-personas
 ```
 
 Configure the provider:
