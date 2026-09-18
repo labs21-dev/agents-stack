@@ -43,7 +43,12 @@ Selection rules:
     semantic/INDEX.md
     episodic/INDEX.md
     procedural/INDEX.md
+    personas/INDEX.md
 ```
+
+Memory is a markdown file protocol, not a provider API and not SQLite.
+See `agent-plugin/agent-memory/SKILL.md`. Working files are gitignored;
+the other drawers may be committed. Personas is optional.
 
 For the default scope, paths look like:
 
@@ -58,6 +63,7 @@ For the default scope, paths look like:
 ./.agents/memory/semantic/INDEX.md
 ./.agents/memory/episodic/INDEX.md
 ./.agents/memory/procedural/INDEX.md
+./.agents/memory/personas/INDEX.md
 ```
 
 For the global scope, replace `./.agents/` with `~/.agents/`.

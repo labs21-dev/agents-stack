@@ -9,6 +9,7 @@ CRUD: agent-memory SKILL.md. Prefer pointers. Invalid → `deprecated`.
 
 | name | when | path | last_updated |
 |------|------|------|--------------|
+| agent-memory | across tools / sessions / remember / forget / preference / handoff | `agent-plugin/agent-memory/SKILL.md` | 2026-09-16 |
 
 ## Not yet a skill
 

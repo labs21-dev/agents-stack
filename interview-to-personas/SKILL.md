@@ -9,7 +9,7 @@ description: >
   and `.agents/memory/personas/{slug}.md`; never invents a persona without
   user-confirmed evidence.
 metadata:
-  version: "1.2.0"
+  version: "1.2.1"
   category: ["personas", "interview", "memory", "personalization"]
   tags:
     - persona
@@ -31,6 +31,10 @@ Turn a real interview into a compact, reusable persona contract. A persona is
 not a demographic label; it is the user's operating protocol: how they want the
 agent to communicate, decide, challenge them, prioritize tradeoffs, and avoid
 known failure modes.
+
+This skill owns the interview and the clause format. Load, CRUD, caps, and the
+shared write-back gate live in `agent-memory`. Agent-memory runs without this
+skill; this skill is only required to run a persona interview.
 
 ## Core rules
 
@@ -155,3 +159,4 @@ Before claiming completion, check:
 
 - `templates/interview.md` — compact interview batch and field guide.
 - `.agents/memory/personas/INDEX.md` — project persona catalog.
+- `agent-plugin/agent-memory/SKILL.md` — memory load, CRUD, and write-back gate.

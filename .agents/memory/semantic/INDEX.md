@@ -10,5 +10,4 @@ The catalog one-liner is the retrieval key.
 
 | slug | one-liner | status | last_updated | as_of | source | file |
 |------|-----------|--------|--------------|-------|--------|------|
-
-0 entries.
+| agent-memory-protocol | Markdown CoALA four + optional persona core; boot is core-first | active | 2026-09-16 | 2026-09-16 | verified | `agent-memory-protocol.md` |

@@ -41,15 +41,18 @@ needed by the current task; do not load every skill into context.
 - [Read Image](agent-plugin/read-image/SKILL.md)
 - [Read Video](agent-plugin/read-video/SKILL.md)
 - [Read Audio](agent-plugin/read-audio/SKILL.md)
-- [Agent Memory](agent-plugin/agent-memory/SKILL.md) — five-duty memory protocol.
+- [Agent Memory](agent-plugin/agent-memory/SKILL.md) — portable markdown memory (CoALA four + optional persona core).
 
 ## Memory Drawers
 
-- [Working](agent-plugin/templates/memory/working/INDEX.md) — current task desk.
-- [Semantic](agent-plugin/templates/memory/semantic/INDEX.md) — stable facts.
-- [Episodic](agent-plugin/templates/memory/episodic/INDEX.md) — experience with lessons.
-- [Procedural](agent-plugin/templates/memory/procedural/INDEX.md) — verified methods and skill pointers.
-- [Personas](agent-plugin/templates/memory/personas/INDEX.md) — user collaboration protocol.
+Boot is core-first: at most one active persona, plus a working file only if
+the task will span compact or handoff. Archival INDEX files load on demand.
+
+- [Working](agent-plugin/templates/memory/working/INDEX.md) — current task desk (core, volatile).
+- [Personas](agent-plugin/templates/memory/personas/INDEX.md) — user collaboration protocol (optional core).
+- [Semantic](agent-plugin/templates/memory/semantic/INDEX.md) — stable facts (archival).
+- [Episodic](agent-plugin/templates/memory/episodic/INDEX.md) — experience with lessons (archival).
+- [Procedural](agent-plugin/templates/memory/procedural/INDEX.md) — verified methods and skill pointers (archival).
 
 ## Project Operations
 
@@ -60,5 +63,6 @@ needed by the current task; do not load every skill into context.
 pytest agent-plugin/tests
 ```
 
-Generated runtime state belongs under `.agents/`. Do not treat memory entries,
-generated artifacts, or credentials as project source.
+Generated runtime state belongs under `.agents/`. Working memory, generated
+artifacts, and credentials are not project source. Semantic / episodic /
+procedural / personas may be committed when the team wants them shared.

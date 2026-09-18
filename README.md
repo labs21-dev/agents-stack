@@ -86,7 +86,7 @@ Skills that create, evolve, or extract other skills and workflows.
 | `read-image` | Answer questions about local images |
 | `read-video` | Answer questions about local or remote video |
 | `read-audio` | Transcribe or analyze local audio |
-| `agent-memory` | Five-duty memory protocol (working / semantic / episodic / procedural / personas) |
+| `agent-memory` | Portable markdown memory: CoALA four drawers + optional persona core |
 
 Entry points:
 
@@ -99,7 +99,8 @@ Storage:
 - Global opt-in: `~/.agents/`
 - Generated media, artifacts, and approvals live under the selected root.
 - Agent memory uses markdown drawers under `.agents/memory/`; no database is required.
-- Persona memory uses `.agents/memory/personas/` and follows `interview-to-personas`.
+- Boot loads an optional persona plus current working memory; semantic / episodic / procedural load on demand.
+- Persona files are optional. Creating them from an interview uses `interview-to-personas`.
 - `~/.agents/skills/` is reserved for installed skills and is never overwritten by runtime state.
 
 ## Installation
@@ -128,7 +129,7 @@ To install the memory drawer templates:
 cp -R agent-plugin/templates/memory ./.agents/memory
 ```
 
-To install persona memory support, also copy:
+To install a persona interview skill (optional; agent-memory runs without it):
 
 ```bash
 cp -R interview-to-personas ./.agents/skills/interview-to-personas

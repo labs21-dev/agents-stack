@@ -2,6 +2,7 @@
 
 > 狀態：設計稿 v0.2（2026-09-12），供實作前審閱。
 > 定位：給本地 agent 用的能力型 skills pack，不是單一 mega-skill。
+> 2026-09-16：4.6 `agent-memory` 已對齊 markdown 協定，不再使用 SQLite / vector。
 
 ## 0. 目標與邊界
 
@@ -165,8 +166,12 @@ agent-plugin/
     storage/
   templates/
     openrouter.config.json
-    provider-config.json
-    memory-record.schema.json
+    memory/
+      working/INDEX.md
+      semantic/INDEX.md
+      episodic/INDEX.md
+      procedural/INDEX.md
+      personas/INDEX.md
 ```
 
 ### 3.1 `pack.json` 示意
@@ -526,56 +531,51 @@ agent-plugin/
 
 ### 4.6 `agent-memory`
 
+Markdown 檔案協議，不是 provider、不是 SQLite、不是向量庫。
+協定正文：`agent-plugin/agent-memory/SKILL.md`。
+
+對齊業界最小集：CoALA 四職責（working / semantic / episodic / procedural）；
+Letta core vs archival；Claude Code 的 INDEX + 按需讀本文。Personas 是可選
+core（協作契約），不是第五種認知記憶。
+
 #### 觸發
 
 - 「記住我喜歡簡短回覆」
 - 「這個專案上次決策是什麼？」
 - 「更新你的長期記憶」
 - 「忘記這件事」
+- 任務會跨 compaction / handoff
+- 類似任務以前失敗過
 
-#### 輸入
+#### 抽屜
 
-| 欄位 | 必填 | 說明 |
-|------|------|------|
-| action | 是 | `write` / `read` / `update` / `delete` |
-| scope | 是 | `global` / `project` / `user` / `thread` |
-| content | write/update 必填 | 記憶內容 |
-| query | read 必填 | 檢索條件 |
-| id | update/delete 必填 | 目標記憶 |
+| 層 | 目錄 | 何時載入 |
+|---|---|---|
+| Core | `personas/`、`working/` | Boot：最多一份 active persona；working 僅在任務會跨 compact/handoff 時建立 |
+| Archival | `semantic/`、`episodic/`、`procedural/` | 需要時先讀 INDEX one-liner，再打開檔案 |
+
+預設根目錄：`./.agents/memory/`。`~/.agents/memory/` 僅在使用者明確要求跨專案時使用，不自動同步。
 
 #### 流程
 
-1. 判斷 scope。
-2. 寫入或讀取 SQLite。
-3. 保留 provenance：
-   - source conversation
-   - file
-   - user instruction
-4. 查詢時結合：
-   - exact match
-   - FTS
-   - optional vector
+1. Boot：persona INDEX（若有列）→ 必要時 working。不要一次讀五份 INDEX。
+2. Recall：INDEX one-liner 決定要不要打開檔案。沒有命中就不要瀏覽資料夾。
+3. Remember：過 write-back gate 後寫入恰好一個抽屜。
+4. Forget：刪檔且刪 catalog 列。
+5. Handoff：working 的 `handoff` 欄是 compact 後唯一要重讀的桌面摘要。
 
 #### 輸出
 
-```json
-{
-  "type": "memory-write",
-  "id": "mem_123",
-  "scope": "project",
-  "kind": "preference",
-  "content": "Use concise bullet summaries.",
-  "source": "conversation",
-  "confidence": 0.9,
-  "createdAt": "2026-09-12T00:00:00Z"
-}
-```
+每次記憶寫入都要明說：drawer、slug、`last_updated`、改了什麼、為何過閘。
+沒有更新則在 handoff 說 `no memory update`。禁止靜默寫入。
 
 #### 失敗模式
 
-- Scope 不明確 → 預設 `project`，不寫入 `global`。
-- 內容含個人敏感資訊 → 先問是否要存。
-- 查無結果 → 不猜測，回「沒有找到」。
+- 把聊天紀錄當 episodic → 只留 context / action / result / lesson。
+- 把 skill 正文複製進 procedural → 只留 pointer。
+- 範圍不明 → 預設 project，不寫入 `~/.agents`。
+- 內容含秘密或敏感資料 → 不寫入。
+- INDEX 沒有命中 → 不猜測，不掃資料夾。
 
 ## 5. Shared contracts
 
@@ -589,29 +589,18 @@ video.generate(storyboard, options) -> VideoResult
 image.read(path, question, options) -> ImageReading
 video.read(path, question, options) -> VideoReading
 audio.read(path, question, options) -> AudioReading
-memory.write(record) -> MemoryId
-memory.read(query, options) -> MemoryList
-memory.update(id, patch) -> MemoryRecord
-memory.delete(id) -> DeleteResult
 ```
+
+Memory is not a provider method. Agents read and write markdown under
+`.agents/memory/` per `agent-memory/SKILL.md`.
 
 ### 5.2 Storage schema
 
-#### Memory record
+#### Memory files
 
-```json
-{
-  "id": "mem_123",
-  "scope": "project",
-  "kind": "preference",
-  "content": "...",
-  "confidence": 0.9,
-  "source": {"type": "conversation", "uri": "..."},
-  "createdAt": "...",
-  "updatedAt": "...",
-  "expiresAt": null
-}
-```
+Each memory entry is one markdown file plus one INDEX catalog row.
+Skeletons and caps live in `agent-plugin/agent-memory/SKILL.md`.
+Do not introduce a parallel JSON/SQLite record format.
 
 ### 5.3 Output contract
 
@@ -645,6 +634,7 @@ Default project-local:
     semantic/
     episodic/
     procedural/
+    personas/
 ```
 
 User-global opt-in:
@@ -683,8 +673,9 @@ Selection rules:
    - 所有生成與理解結果都記錄 provider、模型、時間。
 
 4. **Retention**
-   - Memory 可設定 `expiresAt`。
+   - Semantic 條目可設 `expires`。
    - 支援 `forget`。
+   - Working 在任務結束時刪除，不归档。
 
 ## 8. Packaging
 
@@ -796,11 +787,13 @@ agent-plugin/
 1. 八個 skill 是否足以涵蓋主要 local agent 媒體與記憶需求？
 2. Provider adapter 是否夠穩定，能支援不同 runtime？
 3. Memory scope 是否需要更細的分層？
+   **2026-09-16 結論（80%）：** 預設 `./.agents/memory/`。`~/.agents/memory/` 僅在使用者明確要求跨專案時使用，不自動同步。不新增 thread/user/global 三層 API。
 4. 是否需要把 `read-video` 拆成 `video-summary` / `video-search`？
 
 ## 11. 開放問題
 
 1. Phase 2 之後是否要提供 `ComfyUI` workflow？
 2. Memory 是否要引入 decay / conflict resolution？
+   **2026-09-16 結論（80%）：** semantic 用 `expires` + in-place upsert + `was:`；personas 衝突先解決再寫；INDEX 超過 40 列先 archive。不做 Ebbinghaus 衰減或向量 rerank。
 3. Video generation 是否需要 pre-request cost estimate？
 4. 是否要為每個 skill 建 `evals.json`？

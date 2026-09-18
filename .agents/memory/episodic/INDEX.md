@@ -10,5 +10,4 @@ The catalog one-liner is the retrieval key.
 
 | slug | one-liner | when | last_updated | file |
 |------|-----------|------|--------------|------|
-
-0 entries.
+| 2026-09-16-memory-core-first | Equal load of five INDEX files was the overweight; core-first is the fix | 2026-09-16 | 2026-09-16 | `2026-09-16-memory-core-first.md` |

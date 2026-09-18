@@ -124,3 +124,21 @@
 - 事後驗證：待驗
 - 累計使用次數：2（True OS 到臨、本次）
 - 是否達畢業門檻：否 → 仍為臨時鏡頭
+
+## [2026-09-18] 時序/地平線 — shared vs isolated 記憶路徑
+- 問題類型（見 routing-table.md）：系統/agent 架構設計
+- 觸發變數：記憶條目的合法壽命（task / project / agent-instance）必須跟目錄契約一致
+- 反事實對比：硬套底層邏輯會畫成「shared 一個檔、isolated 一棵樹」兩套 store，漏掉 working 的壽命是 task、semantic 是 project、`{agent_name}` 是 instance；isolated 若不標職責，過期 desk 會假扮成長期事實
+- 觀察推論摘要：租戶軸不能取消職責軸的 TTL。shared/working.md 與 isolated/{agent}/*.md 若無 duty，就沒有「任務結束必須刪」的規則可執行。
+- 事後驗證：待驗
+- 累計使用次數：6（Agent 框架、True OS、連載、信箋、平台、本次）
+- 是否達畢業門檻：次數已滿，事後驗證仍待驗 → 不正式納入 routing-table
+
+## [2026-09-18] 資安/信任邊界 — shared vs isolated 記憶路徑
+- 問題類型（見 routing-table.md）：系統/agent 架構設計
+- 觸發變數：目錄名是否被誤當成讀寫權限
+- 反事實對比：硬套逆向思考會把「agent 互讀」列成一條失敗模式，漏掉 markdown 目錄沒有 harness 就不是 ACL、生成面預設能讀整個 `.agents/`、把秘密放進 isolated/ 是假隔離
+- 觀察推論摘要：isolated 最多是檢索提示（先看自己的 INDEX）。它不是安全邊界。寫閘仍是「不存秘密」；真隔離要靠 runtime 權限，不是資料夾名字。
+- 事後驗證：待驗
+- 累計使用次數：5（Agent 框架、True OS、信箋、平台、本次）
+- 是否達畢業門檻：次數已滿，事後驗證仍待驗 → 不正式納入 routing-table
