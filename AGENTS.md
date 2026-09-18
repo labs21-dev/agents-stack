@@ -23,8 +23,6 @@ needed by the current task; do not load every skill into context.
 
 - [Skill Creator](skill-creator/SKILL.md) — create, evaluate, and package skills.
 - [Skill Evolution](skill-evolution/SKILL.md) — evolve skills from real usage.
-- [Conversation to Skills](conversation-to-skills/SKILL.md) — turn corrections into versioned skills.
-- [Interview to Personas](interview-to-personas/SKILL.md) — interview users and maintain persona memory.
 
 ## Learning
 

@@ -100,8 +100,7 @@ To write semantic / episodic / procedural / personas, all must hold:
 - Episodic: has a lesson; is not a transcript
 - Procedural: proven more than once, or a thin checklist waiting to
   graduate. If a skill already exists, only a pointer
-- Personas: user-confirmed; no unevidenced hard clause. Interview flow
-  lives in `interview-to-personas` if that skill is installed
+- Personas: user-confirmed; no unevidenced hard clause
 
 Five filter questions:
 
@@ -277,8 +276,7 @@ at the right time, and knows what to keep, update, and forget.
 ## Port
 
 Copy `agent-memory/SKILL.md` and the four CoALA INDEX templates into
-any repo. Personas INDEX is optional. `interview-to-personas` is
-optional; it is only needed to run a persona interview.
+any repo. Personas INDEX is optional.
 
 Project files are searched with repo tools. Memory files belong to this
 protocol. Do not copy project documents into the drawers.
